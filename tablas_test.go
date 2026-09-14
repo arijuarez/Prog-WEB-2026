@@ -20,16 +20,12 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	/* Fue comentado para que pueda accederse sin el .env
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	db_name := os.Getenv("DB_NAME")
 	host := os.Getenv("DB_HOST")
 
 	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=5432 sslmode=disable", user, password, db_name, host)
-	*/
-	connStr := "user=postgres password=12345 dbname=DB host=database port=5432 sslmode=disable"
-
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatalf("failed to connect to DB: %v", err)
