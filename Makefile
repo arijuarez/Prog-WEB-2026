@@ -4,10 +4,8 @@ test:
 	sqlc generate
 	docker compose build
 	@echo "Imagen construida..."
-	docker compose up -d --remove-orphans
-	@echo "Contenedor activado..."
 	@echo "Corriendo tests"
-	docker compose run api go test -v
+	docker compose run --rm api go test -v
 	@echo "Testeos realizados exitosamente"
 	docker compose down -v
 	
