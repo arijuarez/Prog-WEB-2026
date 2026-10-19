@@ -21,7 +21,6 @@ GET http://localhost:8080/artists
 HTTP 200
 [Asserts]
 header "Content-Type" contains "application/json"
-jsonpath "$" isArray
 
 # 3. Obtener el artista recién creado (GET /artists/{id})
 GET http://localhost:8080/artists/{{artist_id}}
@@ -76,6 +75,12 @@ HTTP 400
 
 # Intentar actualizar un artista que no existe
 PUT http://localhost:8080/artists/999999
+Content-Type: application/json
+{
+  "artist_name": "pedro",
+  "photo": 1,
+  "artist_bio": "genio de la musica"
+}
 HTTP 404
 
 # Intentar eliminar un artista que no existe

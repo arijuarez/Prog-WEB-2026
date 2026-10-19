@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	bd "tp2/bd/sqlc"
 
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 	// Reemplazar esta ruta por la de GitHub
 	//bd "Prog-WEB-2026/bd"
 )
@@ -30,7 +30,7 @@ type Album struct {
 	AlbumName      string    `json:"album_name"`
 	AlbumDur       int32     `json:"album_dur"`
 	AlbumPh        int32     `json:"album_ph"`
-	ReleaseDate    time.Time `json:"release_date"`
+	ReleaseDate    string `json:"release_date"`
 	ArtistIDArtist int32     `json:"artist_id_artist"`
 	Likes          int32     `json:"likes"`
 }
@@ -105,21 +105,19 @@ func (h *AlbumHandler) createAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validar que los campos obligatorios no vengan vacíos
-	if strings.TrimSpace(album.AlbumName) == "" ||
-		strings.TrimSpace(album.ReleaseDate.String()) == "" ||
-		album.AlbumDur < 0 ||
-		album.AlbumPh < 0 ||
-		album.ArtistIDArtist < 0 ||
-		album.Likes < 0 {
-		http.Error(w, "Faltan campos obligatorios o hay campos erroneos al crear el álbum", http.StatusBadRequest)
+	err = validateAlbumFields(album)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	
+	releaseDate, _ := time.Parse("2006-01-02", album.ReleaseDate)
 
 	params := bd.CreateAlbumParams{
 		AlbumName:      album.AlbumName,
 		AlbumDur:       album.AlbumDur,
 		AlbumPh:        album.AlbumPh,
-		ReleaseDate:    album.ReleaseDate,
+		ReleaseDate:    releaseDate,
 		ArtistIDArtist: album.ArtistIDArtist,
 		Likes:          album.Likes,
 	}
@@ -133,6 +131,28 @@ func (h *AlbumHandler) createAlbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // Estado 201 Created
 	json.NewEncoder(w).Encode(createdAlbum)
+}
+
+func validateAlbumFields(album Album) error {
+	if strings.TrimSpace(album.AlbumName) == "" {
+		return errors.New("El nombre del álbum no puede estar vacío")
+	}
+	if _, err := time.Parse("2006-01-02", album.ReleaseDate); err != nil {
+		return errors.New("Fecha de release invalida (formato YYYY-MM-DD)")
+	}
+	if album.AlbumDur < 0 {
+		return errors.New("Duración del álbum no puede ser negativa")
+	}
+	if album.AlbumPh < 0 {
+		return errors.New("Ph del álbum no puede ser negativo")
+	}
+	if album.ArtistIDArtist < 0 {
+		return errors.New("ID del artista no puede ser negativo")
+	}
+	if album.Likes < 0 {
+		return errors.New("Likes del álbum no puede ser negativo")
+	}
+	return nil
 }
 
 // GET /albums/{id} - Obtener un álbum por ID
@@ -172,23 +192,20 @@ func (h *AlbumHandler) updateAlbum(w http.ResponseWriter, r *http.Request, id in
 		return
 	}
 
-	// Validar datos 
-	if strings.TrimSpace(album.AlbumName) == "" ||
-		strings.TrimSpace(album.ReleaseDate.String()) == "" ||
-		album.AlbumDur < 0 ||
-		album.AlbumPh < 0 ||
-		album.ArtistIDArtist < 0 ||
-		album.Likes < 0 {
-		http.Error(w, "Faltan campos obligatorios al actualizar el álbum", http.StatusBadRequest)
+	err = validateAlbumFields(album)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	
+	releaseDate, _ := time.Parse("2006-01-02", album.ReleaseDate)
 
 	params := bd.UpdateAlbumParams{
 		IDAlbum:        id,
 		AlbumName:      album.AlbumName,
 		AlbumDur:       album.AlbumDur,
 		AlbumPh:        album.AlbumPh,
-		ReleaseDate:    album.ReleaseDate,
+		ReleaseDate:    releaseDate,
 		ArtistIDArtist: album.ArtistIDArtist,
 		Likes:          album.Likes,
 	}

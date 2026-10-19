@@ -8,8 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	bd "tp2/bd/sqlc"
-	// reemplazar después por el link al github
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 )
  
 // Contiene las dependencias
@@ -36,7 +35,7 @@ type Review struct {
 }
  
 // maneja peticiones a /reviews
-func (h *ReviewHandler) reviewsHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ReviewHandler) ReviewsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		h.getReviews(w, r)
@@ -49,7 +48,7 @@ func (h *ReviewHandler) reviewsHandler(w http.ResponseWriter, r *http.Request) {
 }
  
 // maneja peticiones a /reviews/{id}
-func (h *ReviewHandler) reviewHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ReviewHandler) ReviewHandler(w http.ResponseWriter, r *http.Request) {
  
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 3 {
@@ -228,12 +227,18 @@ func (h *ReviewHandler) updateReview(w http.ResponseWriter, r *http.Request, id 
  
 // DELETE /reviews/{id} - Eliminar una reseña específica
 func (h *ReviewHandler) deleteReview(w http.ResponseWriter, r *http.Request, id int32) {
-	err := h.queries.DeleteReview(r.Context(), id)
- 
-	if err == sql.ErrNoRows {
-		http.Error(w, "Review no encontrada para eliminar", http.StatusNotFound) // 404
+	// Verificar si la review existe antes de borrar
+	_, err := h.queries.GetReview(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Review no encontrado para eliminar", http.StatusNotFound) // Estado 404
+			return
+		}
+		http.Error(w, "Error al buscar review", http.StatusInternalServerError)
 		return
-	}
+	}	
+	
+	err = h.queries.DeleteReview(r.Context(), id)
 	if err != nil {
 		http.Error(w, "Error al eliminar review", http.StatusInternalServerError) // 500
 		return

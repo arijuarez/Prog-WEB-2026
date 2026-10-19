@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	bd "tp2/bd/sqlc"
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 )
 
 // ArtistSongHandler contiene las dependencias de la base de datos

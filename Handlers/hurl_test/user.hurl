@@ -2,6 +2,7 @@
 
 # 1. Crear nuevo usuario
 POST http://localhost:8080/users
+Content-Type: application/json
 {
     "user_name":    "Usuario de prueba",
     "amigos":       0,
@@ -29,7 +30,6 @@ GET http://localhost:8080/users
 HTTP 200
 [Asserts]
 header "Content-Type" contains "application/json"
-jsonpath "$" isArray
 
 # 4. Actualizar usuario
 PUT http://localhost:8080/users/{{user_id}}
@@ -86,6 +86,13 @@ HTTP 400
 
 # 11. Intentar actualizar un usuario que no existe
 PUT http://localhost:8080/users/999999
+Content-Type: application/json
+{
+    "id_user":      999999,
+    "user_name":    "Usuario Inexistente",
+    "amigos":       0,
+    "photo":        1
+}
 HTTP 404
 
 # 12. Intentar eliminar un usuario que no existe

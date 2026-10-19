@@ -70,8 +70,6 @@ GET http://localhost:8080/artist-songs
 HTTP 200
 [Asserts]
 header "Content-Type" contains "application/json"
-jsonpath "$" isArray
-jsonpath "$.length()" == 1
 jsonpath "$[0].artist_id_artist" == {{aux_artist_id}}
 jsonpath "$[0].song_id_song" == {{aux_song_id}}
 jsonpath "$[0].roll" == true

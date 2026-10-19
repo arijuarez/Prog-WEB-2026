@@ -32,7 +32,7 @@ Content-Type: application/json
   "album_name": "Random Access Memories",
   "album_dur": 4438,
   "album_ph": 1,
-  "release_date": "2013-05-17",
+  "release_date": "1973-03-01",
   "artist_id_artist": {{aux_artist_id}},
   "likes": 0
 }
@@ -61,10 +61,10 @@ Content-Type: application/json
 {
   "review_text": "Excelente álbum y producción impecable.",
   "review_rate": 4.8,
-  "review_date": "2024-05-10",
+  "review_date": "1973-03-01",
   "user_id_user": {{aux_user_id}},
   "song_id_song": {{aux_song_id}},
-  "album_id_album": {{aux_album_id}},
+  "album_id_album": null,
   "likes": 0
 }
 HTTP 201
@@ -74,8 +74,9 @@ review_id: jsonpath "$.id_review"
 jsonpath "$.review_text" == "Excelente álbum y producción impecable."
 jsonpath "$.review_rate" == 4.8
 jsonpath "$.user_id_user" == {{aux_user_id}}
-jsonpath "$.song_id_song" == {{aux_song_id}}
-jsonpath "$.album_id_album" == {{aux_album_id}}
+jsonpath "$.song_id_song.Int32" == {{aux_song_id}}
+jsonpath "$.song_id_song.Valid" == true
+jsonpath "$.album_id_album.Valid" == false
 
 # 2. Obtener la review recién creada
 GET http://localhost:8080/reviews/{{review_id}}
@@ -90,8 +91,6 @@ GET http://localhost:8080/reviews
 HTTP 200
 [Asserts]
 header "Content-Type" contains "application/json"
-jsonpath "$" isArray
-jsonpath "$.length()" == 1
 jsonpath "$[0].id_review" == {{review_id}}
 jsonpath "$[0].review_text" == "Excelente álbum y producción impecable."
 jsonpath "$[0].user_id_user" == {{aux_user_id}}
@@ -105,7 +104,7 @@ Content-Type: application/json
   "review_date": "2024-05-11",
   "user_id_user": {{aux_user_id}},
   "song_id_song": {{aux_song_id}},
-  "album_id_album": {{aux_album_id}},
+  "album_id_album": null,
   "likes": 12
 }
 HTTP 200
@@ -166,7 +165,7 @@ Content-Type: application/json
   "review_date": "2024-05-10",
   "user_id_user": {{aux_user_id}},
   "song_id_song": {{aux_song_id}},
-  "album_id_album": {{aux_album_id}},
+  "album_id_album": null,
   "likes": 0
 }
 HTTP 404

@@ -1,62 +1,96 @@
 package main
 
 import (
+	"os"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
-	"time"
-	"Prog-WEB-2026/Handlers"
+	"fmt"
+
+	Handlers "github.com/arijuarez/Prog-WEB-2026/Handlers"
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
+
 	_ "github.com/lib/pq" //importar drivers
 )
 
 func abrirDB() (*sql.DB, error) {
+	// Lee las variables de entorno o usa los valores por defecto (para ejecución fuera de Docker)
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
 
-	//Abre base de datos
-	db, err := sql.Open("mysql", "usuario:clave@tcp(localhost:3306)/mi_app")
+	dbPort := os.Getenv("DB_PORT")
+	if dbPort == "" {
+		dbPort = "5431"
+	}
 
-	// Alternativa: db, err := sql.Open("postgres", "postgres://postgres:1234@localhost:5431/postgres?sslmode=disable")
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		dbUser = "postgres"
+	}
 
-	//no confundir nombre del docker con nombre de la db
-	db, err = sql.Open("postgres", "host=localhost port=5431 user=postgres password=1234 dbname=postgres sslmode=disable")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		dbPassword = "1234"
+	}
 
-	//Controla errores
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		dbName = "postgres"
+	}
+
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		dbHost, dbPort, dbUser, dbPassword, dbName)
+
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}
+
 	if err := db.Ping(); err != nil {
-		// Verifica que la BD responde
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(25) // Configura el tamaño del pool
+	db.SetMaxOpenConns(25)
 	return db, nil
 }
 
 func main() {
-	http.HandleFunc("/users", usersHandler)
-	http.HandleFunc("/users/", userHandler)
-	http.HandleFunc("/artists", artistsHandler)
-	http.HandleFunc("/artists/", artistHandler)
-	http.HandleFunc("/songs", songsHandler)
-	http.HandleFunc("/songs/", songHandler)
-	http.HandleFunc("/albums", albumsHandler)
-	http.HandleFunc("/albums/", albumHandler)
-	http.HandleFunc("/reviews", reviewsHandler)
-	http.HandleFunc("/reviews/", reviewHandler)
-
 	db, err := abrirDB()
 	if err != nil {
 		log.Fatalf("Error al conectar con base de datos %v\n", err)
 	}
-	repo := userRepository{db: db}
+	defer db.Close()
+	log.Println("Conexión a PostgreSQL establecida correctamente")
 
-	
+	queries := bd.New(db)
+
+	userH := Handlers.NewUserHandler(queries)
+	artistH := Handlers.NewArtistHandler(queries)
+	songH := Handlers.NewSongHandler(queries)
+	albumH := Handlers.NewAlbumHandler(queries)
+	reviewH := Handlers.NewReviewHandler(queries)
+	artistSongH := Handlers.NewArtistSongHandler(queries)
+
+	http.HandleFunc("/users", userH.UsersHandler)
+	http.HandleFunc("/users/", userH.UserHandler)
+
+	http.HandleFunc("/artists", artistH.ArtistsHandler)
+	http.HandleFunc("/artists/", artistH.ArtistHandler)
+
+	http.HandleFunc("/songs", songH.SongsHandler)
+	http.HandleFunc("/songs/", songH.SongHandler)
+
+	http.HandleFunc("/albums", albumH.AlbumsHandler)
+	http.HandleFunc("/albums/", albumH.AlbumHandler)
+
+	http.HandleFunc("/reviews", reviewH.ReviewsHandler)
+	http.HandleFunc("/reviews/", reviewH.ReviewHandler)
+
+	http.HandleFunc("/artist-songs", artistSongH.ArtistSongsHandler)
+	http.HandleFunc("/artist-songs/", artistSongH.ArtistSongHandler)
+
 	log.Println("Server starting on :8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
-	defer db.Close()
-
-	fmt.Println("Se conectó exitosamente")
-
-	//Instanciamos repositorio
 }

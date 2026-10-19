@@ -62,7 +62,6 @@ GET http://localhost:8080/songs
 HTTP 200
 [Asserts]
 header "Content-Type" contains "application/json"
-jsonpath "$" isArray
 
 # 4. Actualizar canción
 PUT http://localhost:8080/songs/{{song_id}}

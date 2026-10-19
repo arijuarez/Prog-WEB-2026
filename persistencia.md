@@ -70,18 +70,39 @@ RESUMEN DE RELACIONES:
 ## 2. Estructura de Directorio
 DataModelerSQL.png
 
-```
-tp2/
+Prog-WEB-2026/
 ├── bd/
-│   ├── sqlc/               # Código Go generado por sqlc
-│   │   ├── db.go          
-│   │   ├── models.go       # Estructuras de las entidades 
-│   │   └── queries.sql.go  # Métodos para ejecutar consultas SQL
-│   ├── queries.sql         # Sentencias SQL con anotaciones para sqlc (-- name: ...)
-│   └── schema.sql          # Definición de las tablas y relaciones
-├── docker-compose.yml      # Contenedor PostgreSQL
-├── Dockerfile              # Imagen para pruebas e integración continua
-├── Makefile                # Archivo para ejecutar los tests y activar el docker etc
-├── sqlc.yaml               # Configuración del generador sqlc
-├── persistencia.md         # Documentación de la capa de datos
-└── tablas_test.go          # Unit tests para las tablas
+│   ├── sqlc/
+│   │   ├── db.go
+│   │   ├── models.go
+│   │   └── queries.sql.go
+│   ├── DataModelerSQL.png
+│   ├── persistencia.md
+│   ├── queries.sql
+│   └── schema.sql
+├── Handlers/
+│   ├── hurl_test/              -- Tests hurls para verificar endpoints de cada ruta
+│   │   ├── album.hurl
+│   │   ├── artist_song.hurl
+│   │   ├── artist.hurl
+│   │   ├── review.hurl
+│   │   ├── song.hurl
+│   │   └── user.hurl
+│   ├── album.go                -- Handlers de cada entidad
+│   ├── artist_song.go
+│   ├── artists.go
+│   ├── review.go
+│   ├── song.go
+│   └── user.go
+├── .env
+├── .gitignore
+├── docker-compose.yml
+├── Dockerfile
+├── go.mod
+├── go.sum
+├── main.go
+├── Makefile
+├── persistencia.md
+├── README.md
+├── sqlc.yaml
+└── tablas_test.go

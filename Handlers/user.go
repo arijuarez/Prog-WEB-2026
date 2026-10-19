@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	bd "tp2/bd/sqlc"
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 
 )
 
@@ -29,7 +29,7 @@ type User struct {
 }
 
 // maneja peticiones a /users
-func (h *UserHandler) usersHandler(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) UsersHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		h.getUsers(w, r)
@@ -41,7 +41,7 @@ func (h *UserHandler) usersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // maneja peticiones a /users/{id}
-func (h *UserHandler) userHandler(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) UserHandler(w http.ResponseWriter, r *http.Request) {
 
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 3 {
@@ -115,7 +115,7 @@ func validateNewUser(usuario User) error {
 	if strings.TrimSpace(usuario.UserName) == "" {
 		return errors.New("Falta nombre de usuario")
 	}
-	if usuario.Amigos != 0 {
+	if usuario.Amigos < 0 {
 		return errors.New("Valor invalido de amigos")
 	}
 	return nil
@@ -154,9 +154,9 @@ func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request, id int3
 	}
 
 	usario, err := h.queries.UpdateUser(r.Context(), params)
-	if err == sql.ErrNoRows {
-		http.Error(w, "Usuario no encontrado para actualizar", http.StatusNotFound) // 404
-		return
+	if errors.Is(err, sql.ErrNoRows) {
+    	http.Error(w, "Usuario no encontrado para actualizar", http.StatusNotFound)
+    	return
 	}
 	if err != nil {
 		http.Error(w, "Error al actualizar el usuario", http.StatusInternalServerError)
@@ -164,16 +164,23 @@ func (h *UserHandler) updateUser(w http.ResponseWriter, r *http.Request, id int3
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(usario)
 }
 // DELETE /users/{id} - Eliminar un usuario específico
 func (h *UserHandler) deleteUser(w http.ResponseWriter, r *http.Request, id int32) {
-	err := h.queries.DeleteUser(r.Context(), id)
-
-	if err == sql.ErrNoRows {
-		http.Error(w, "Usuario no encontrado para eliminar", http.StatusNotFound) // 404
+	// Verificar si el usuario existe antes de borrar
+	_, err := h.queries.GetUserById(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Usuario no encontrado para eliminar", http.StatusNotFound) // Estado 404
+			return
+		}
+		http.Error(w, "Error al buscar el usuario", http.StatusInternalServerError)
 		return
 	}
+
+	err = h.queries.DeleteUser(r.Context(), id)
 	if err != nil {
 		http.Error(w, "Error al eliminar usuario", http.StatusInternalServerError) // 500
 		return

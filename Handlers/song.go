@@ -7,8 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	bd "tp2/bd/sqlc"
-	// reemplazar después por el link al github
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 )
  
 // Contiene las dependencias
@@ -31,7 +30,7 @@ type Song struct {
 
  
 // maneja peticiones a /songs
-func (h *SongHandler) songsHandler(w http.ResponseWriter, r *http.Request) {
+func (h *SongHandler) SongsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		h.getSongs(w, r)
@@ -44,7 +43,7 @@ func (h *SongHandler) songsHandler(w http.ResponseWriter, r *http.Request) {
 }
  
 // maneja peticiones a /songs/{id}
-func (h *SongHandler) songHandler(w http.ResponseWriter, r *http.Request) {
+func (h *SongHandler) SongHandler(w http.ResponseWriter, r *http.Request) {
  
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 3 {
@@ -197,12 +196,18 @@ func (h *SongHandler) updateSong(w http.ResponseWriter, r *http.Request, id int3
  
 // DELETE /songs/{id} - Eliminar una canción específica
 func (h *SongHandler) deleteSong(w http.ResponseWriter, r *http.Request, id int32) {
-	err := h.queries.DeleteSong(r.Context(), id)
- 
-	if err == sql.ErrNoRows {
-		http.Error(w, "Cancion no encontrada para eliminar", http.StatusNotFound) // 404
+	// Verificar si la canción existe antes de borrar
+	_, err := h.queries.GetSongById(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Canción no encontrado para eliminar", http.StatusNotFound) // Estado 404
+			return
+		}
+		http.Error(w, "Error al buscar la canción", http.StatusInternalServerError)
 		return
 	}
+	
+	err = h.queries.DeleteSong(r.Context(), id)
 	if err != nil {
 		http.Error(w, "Error al eliminar cancion", http.StatusInternalServerError) // 500
 		return

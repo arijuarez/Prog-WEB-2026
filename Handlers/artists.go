@@ -3,11 +3,12 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
-	bd "tp2/bd/sqlc"
 
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 	// reemplazar después por el link al github
 	//"Prog-WEB-2026/bd"
 )
@@ -31,7 +32,7 @@ type Artista struct {
 }
 
 // Manejar peticiones a /artists
-func (h *ArtistHandler) artistsHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ArtistHandler) ArtistsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		h.getArtists(w, r)
@@ -44,7 +45,7 @@ func (h *ArtistHandler) artistsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Maneja peticiones a /artists/{id}
-func (h *ArtistHandler) artistHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ArtistHandler) ArtistHandler(w http.ResponseWriter, r *http.Request) {
 	// Extraer id del path
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 3 {
@@ -149,6 +150,7 @@ func (h *ArtistHandler) updateArtist(w http.ResponseWriter, r *http.Request, id 
 	}
 
 	params := bd.UpdateArtistParams{
+		IDArtist:   id,
 		ArtistName: artista.ArtistName,
 		Photo:      artista.Photo,
 		ArtistBio:  artista.ArtistBio,
@@ -166,17 +168,22 @@ func (h *ArtistHandler) updateArtist(w http.ResponseWriter, r *http.Request, id 
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK) // 200 OK
 	json.NewEncoder(w).Encode(artist)
 }
 
 func (h *ArtistHandler) deleteArtist(w http.ResponseWriter, r *http.Request, id int32) {
-	err := h.queries.DeleteArtist(r.Context(), id)
-
-	if err == sql.ErrNoRows {
-		http.Error(w, "Artista no encontrado para eliminar", http.StatusNotFound) // 404
+	// Verificar si el artista existe antes de borrar
+	_, err := h.queries.GetArtistById(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Artista no encontrado para eliminar", http.StatusNotFound) // Estado 404
+			return
+		}
+		http.Error(w, "Error al buscar el artista", http.StatusInternalServerError)
 		return
 	}
+	
+	err = h.queries.DeleteArtist(r.Context(), id)
 	if err != nil {
 		http.Error(w, "Error al eliminar artista", http.StatusInternalServerError) // 500
 		return

@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	sqlc "tp2/bd/sqlc" // generado por sqlc
+	sqlc "github.com/arijuarez/Prog-WEB-2026/bd/sqlc" // generado por sqlc
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
