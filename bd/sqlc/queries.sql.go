@@ -226,7 +226,7 @@ func (q *Queries) CreateSong(ctx context.Context, arg CreateSongParams) (Song, e
 		&i.AlbumIDAlbum,
 	)
 	return i, err
-}
+} 
 
 const createUser = `-- name: CreateUser :one
 

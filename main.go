@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 	"database/sql"
-	"log"
+	//"log"
 	"net/http"
 	"fmt"
 
-	Handlers "github.com/arijuarez/Prog-WEB-2026/Handlers"
-	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
+	//Handlers "github.com/arijuarez/Prog-WEB-2026/Handlers"
+	//bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 
 	_ "github.com/lib/pq" //importar drivers
 )
@@ -57,13 +57,14 @@ func abrirDB() (*sql.DB, error) {
 }
 
 func main() {
-	db, err := abrirDB()
+	static := "./static"
+	/*db, err := abrirDB()
 	if err != nil {
 		log.Fatalf("Error al conectar con base de datos %v\n", err)
 	}
 	defer db.Close()
 	log.Println("Conexión a PostgreSQL establecida correctamente")
-
+	
 	queries := bd.New(db)
 
 	userH := Handlers.NewUserHandler(queries)
@@ -93,4 +94,12 @@ func main() {
 
 	log.Println("Server starting on :8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
+	*/
+	fileServer := http.FileServer(http.Dir(static))
+	http.Handle("/", fileServer)
+	port:= ":8080"
+	err := http.ListenAndServe(port,nil)
+	if err != nil {
+		fmt.Printf("Error al iniciar el servidor: %v\n", err)
+	}
 }

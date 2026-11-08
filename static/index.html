@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JamBox — Reseñas de canciones, álbumes y artistas</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body id="body">
+
+  <!-- ============ HEADER / NAVEGACIÓN ============ -->
+  <header id="site-header">
+    <div id="header-container">
+      <a id="logo" href="/">JamBox</a>
+
+      <nav id="main-nav">
+        <ul id="nav-list">
+          <li id="nav-songs"><a href="/canciones">Canciones</a></li>
+          <li id="nav-albums"><a href="/albumes">Álbumes</a></li>
+          <li id="nav-artists"><a href="/artistas">Artistas</a></li>
+          <li id="nav-lists"><a href="/listas">Listas</a></li>
+          <li id="nav-members"><a href="/miembros">Miembros</a></li>
+        </ul>
+      </nav>
+
+      <div id="header-actions">
+        <!-- Visible si NO hay sesión -->
+        <div id="auth-guest">
+          <button id="btn-login" type="button">Iniciar sesión</button>
+          <button id="btn-signup" type="button">Crear cuenta</button>
+        </div>
+
+        <!-- Visible si HAY sesión -->
+        <div id="auth-user" hidden>
+          <div id="user-menu-toggle">
+            <img id="user-avatar" src="/static/img/avatar-default.png" alt="Avatar">
+            <span id="user-name">usuario</span>
+          </div>
+          <div id="user-menu" hidden>
+            <a id="menu-profile" href="/perfil">Perfil</a>
+            <a id="menu-diary" href="/diario">Diario</a>
+            <a id="menu-reviews" href="/resenas">Reseñas</a>
+            <a id="menu-listenlist" href="/pendientes">Para escuchar</a>
+            <a id="menu-settings" href="/ajustes">Ajustes</a>
+            <button id="btn-logout" type="button">Cerrar sesión</button>
+          </div>
+        </div>
+
+        <button id="btn-new-review" type="button">+ Reseña</button>
+
+        <form id="search-form" action="/buscar" method="get">
+          <input id="search-input" type="search" name="q" placeholder="Buscar canciones, álbumes, artistas" autocomplete="off">
+          <button id="search-submit" type="submit">Buscar</button>
+          <div id="search-results" hidden></div>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main id="site-main">
+
+    <!-- ============ HERO ============ -->
+    <section id="hero">
+      <div id="hero-backdrop"></div>
+      <div id="hero-content">
+        <h1 id="hero-title">Registrá lo que escuchás. Contá lo que sentís.</h1>
+        <p id="hero-subtitle">Reseñá canciones, álbumes y artistas, y descubrí qué escuchan tus amigos.</p>
+        <button id="hero-cta" type="button">Empezar, es gratis</button>
+        <p id="hero-tagline">La red social para quienes aman la música.</p>
+      </div>
+    </section>
+
+    <!-- ============ FUNCIONALIDADES ============ -->
+    <section id="features">
+      <h2 id="features-title">JamBox te permite...</h2>
+      <div id="features-grid">
+        <div id="feature-log" class="feature">
+          <h3 id="feature-log-title">Registrar</h3>
+          <p id="feature-log-text">Llevá la cuenta de todo lo que escuchaste, o empezá desde el día de hoy.</p>
+        </div>
+        <div id="feature-rate" class="feature">
+          <h3 id="feature-rate-title">Puntuar</h3>
+          <p id="feature-rate-text">Calificá de media estrella a cinco y guardá tus favoritos.</p>
+        </div>
+        <div id="feature-review" class="feature">
+          <h3 id="feature-review-title">Reseñar</h3>
+          <p id="feature-review-text">Escribí y compartí tu opinión sobre cualquier canción o álbum.</p>
+        </div>
+        <div id="feature-follow" class="feature">
+          <h3 id="feature-follow-title">Seguir</h3>
+          <p id="feature-follow-text">Seguí a tus amigos y a otros melómanos para ver qué escuchan.</p>
+        </div>
+        <div id="feature-lists" class="feature">
+          <h3 id="feature-lists-title">Listar</h3>
+          <p id="feature-lists-text">Armá y compartí listas: tus mejores discos del año, canciones para viajar...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NOVEDADES / POPULARES ============ -->
+    <section id="popular-albums">
+      <div id="popular-albums-header" class="section-header">
+        <h2 id="popular-albums-title">Álbumes populares esta semana</h2>
+        <a id="popular-albums-more" href="/albumes">Ver más</a>
+      </div>
+      <div id="popular-albums-grid" class="cover-grid">
+        <!-- Ejemplo de tarjeta; repetir con un range de Go -->
+        <article id="album-card-1" class="cover-card" data-album-id="1">
+          <a id="album-link-1" href="/album/1">
+            <img id="album-cover-1" src="/static/img/placeholder-cover.png" alt="Portada del álbum">
+          </a>
+          <div id="album-info-1" class="cover-info">
+            <span id="album-rating-1" class="rating">★ 4.2</span>
+            <span id="album-reviews-1" class="reviews-count">1.2k reseñas</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="popular-songs">
+      <div id="popular-songs-header" class="section-header">
+        <h2 id="popular-songs-title">Canciones del momento</h2>
+        <a id="popular-songs-more" href="/canciones">Ver más</a>
+      </div>
+      <div id="popular-songs-grid" class="cover-grid">
+        <article id="song-card-1" class="cover-card" data-song-id="1">
+          <a id="song-link-1" href="/cancion/1">
+            <img id="song-cover-1" src="/static/img/placeholder-cover.png" alt="Portada de la canción">
+          </a>
+          <div id="song-info-1" class="cover-info">
+            <span id="song-title-1" class="track-title">Título</span>
+            <span id="song-rating-1" class="rating">★ 4.0</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="popular-artists">
+      <div id="popular-artists-header" class="section-header">
+        <h2 id="popular-artists-title">Artistas en tendencia</h2>
+        <a id="popular-artists-more" href="/artistas">Ver más</a>
+      </div>
+      <div id="popular-artists-grid" class="cover-grid">
+        <article id="artist-card-1" class="cover-card" data-artist-id="1">
+          <a id="artist-link-1" href="/artista/1">
+            <img id="artist-photo-1" src="/static/img/placeholder-artist.png" alt="Foto del artista">
+          </a>
+          <span id="artist-name-1" class="artist-name">Artista</span>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ RESEÑAS Y LISTAS ============ -->
+    <div id="community-columns">
+
+      <section id="popular-reviews">
+        <div id="popular-reviews-header" class="section-header">
+          <h2 id="popular-reviews-title">Reseñas populares</h2>
+          <a id="popular-reviews-more" href="/resenas">Más reseñas</a>
+        </div>
+        <div id="popular-reviews-list">
+          <article id="review-card-1" class="review-card" data-review-id="1">
+            <img id="review-cover-1" class="review-cover" src="/static/img/placeholder-cover.png" alt="Portada">
+            <div id="review-body-1" class="review-body">
+              <h3 id="review-target-1" class="review-target">Nombre del álbum <span id="review-year-1">2026</span></h3>
+              <div id="review-author-1" class="review-author">
+                <img id="review-author-avatar-1" src="/static/img/avatar-default.png" alt="">
+                <a id="review-author-name-1" href="/usuario/1">usuario</a>
+                <span id="review-stars-1" class="stars">★★★★☆</span>
+              </div>
+              <p id="review-text-1" class="review-text">Texto de la reseña...</p>
+              <div id="review-actions-1" class="review-actions">
+                <button id="review-like-1" type="button" class="btn-like">♥ <span id="review-likes-1">0</span></button>
+                <button id="review-comment-1" type="button" class="btn-comment">Comentar <span id="review-comments-1">0</span></button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <aside id="sidebar">
+        <section id="popular-lists">
+          <div id="popular-lists-header" class="section-header">
+            <h2 id="popular-lists-title">Listas populares</h2>
+            <a id="popular-lists-more" href="/listas">Más listas</a>
+          </div>
+          <div id="popular-lists-container">
+            <article id="list-card-1" class="list-card" data-list-id="1">
+              <div id="list-covers-1" class="list-covers"></div>
+              <h3 id="list-title-1" class="list-title"><a href="/lista/1">Título de la lista</a></h3>
+              <span id="list-author-1" class="list-author">por usuario</span>
+              <span id="list-count-1" class="list-count">12 elementos</span>
+            </article>
+          </div>
+        </section>
+
+        <section id="recent-activity">
+          <h2 id="recent-activity-title">Actividad reciente</h2>
+          <ul id="recent-activity-list"></ul>
+        </section>
+      </aside>
+
+    </div>
+
+    <!-- ============ LLAMADO FINAL ============ -->
+    <section id="bottom-cta">
+      <h2 id="bottom-cta-title">Tu historia musical empieza acá.</h2>
+      <button id="bottom-cta-btn" type="button">Crear mi cuenta</button>
+    </section>
+
+  </main>
+
+  <!-- ============ MODALES ============ -->
+  <div id="modal-overlay" hidden>
+
+    <div id="modal-login" class="modal" hidden>
+      <button id="modal-login-close" class="modal-close" type="button">×</button>
+      <h2 id="modal-login-title">Iniciar sesión</h2>
+      <form id="login-form">
+        <input id="login-username" type="text" name="username" placeholder="Usuario o email" required>
+        <input id="login-password" type="password" name="password" placeholder="Contraseña" required>
+        <p id="login-error" class="form-error" hidden></p>
+        <button id="login-submit" type="submit">Entrar</button>
+      </form>
+    </div>
+
+    <div id="modal-signup" class="modal" hidden>
+      <button id="modal-signup-close" class="modal-close" type="button">×</button>
+      <h2 id="modal-signup-title">Crear cuenta</h2>
+      <form id="signup-form">
+        <input id="signup-email" type="email" name="email" placeholder="Email" required>
+        <input id="signup-username" type="text" name="username" placeholder="Nombre de usuario" required>
+        <input id="signup-password" type="password" name="password" placeholder="Contraseña" required>
+        <p id="signup-error" class="form-error" hidden></p>
+        <button id="signup-submit" type="submit">Crear cuenta</button>
+      </form>
+    </div>
+
+    <div id="modal-review" class="modal" hidden>
+      <button id="modal-review-close" class="modal-close" type="button">×</button>
+      <h2 id="modal-review-title">Nueva reseña</h2>
+      <form id="review-form">
+        <input id="review-search" type="text" name="target" placeholder="Buscá una canción, álbum o artista" required>
+        <div id="review-rating" class="rating-input">
+          <button id="star-1" type="button" data-value="1">★</button>
+          <button id="star-2" type="button" data-value="2">★</button>
+          <button id="star-3" type="button" data-value="3">★</button>
+          <button id="star-4" type="button" data-value="4">★</button>
+          <button id="star-5" type="button" data-value="5">★</button>
+          <input id="review-rating-value" type="hidden" name="rating" value="0">
+        </div>
+        <textarea id="review-content" name="content" rows="6" placeholder="Escribí tu reseña..."></textarea>
+        <label id="review-spoiler-label"><input id="review-spoiler" type="checkbox" name="spoiler"> Contiene spoilers</label>
+        <button id="review-submit" type="submit">Publicar</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer id="site-footer">
+    <div id="footer-container">
+      <nav id="footer-nav">
+        <a id="footer-about" href="/acerca">Acerca de</a>
+        <a id="footer-help" href="/ayuda">Ayuda</a>
+        <a id="footer-terms" href="/terminos">Términos</a>
+        <a id="footer-privacy" href="/privacidad">Privacidad</a>
+        <a id="footer-contact" href="/contacto">Contacto</a>
+      </nav>
+      <p id="footer-copy">© 2026 JamBox. Hecho por y para amantes de la música.</p>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

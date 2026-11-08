@@ -12,3 +12,10 @@ test-hurl:
 	@echo "Pruebas completadas exitosamente."
 	@echo "Limpiando entorno Docker..."
 	@docker compose down -v
+
+exec:
+	@echo "Eliminando volúmenes y contenedores previos..."
+	@docker compose down -v
+	@echo "Construyendo y levantando contenedores..."
+	@docker compose up -d --build --wait
+	@go run .
