@@ -25,13 +25,13 @@ templ Layout(titulo string){
         </nav>
 
         <div id="header-actions">
-            <!-- Visible si NO hay sesión -->
+            //-- Visible si NO hay sesión -->
             <div id="auth-guest">
             <button id="btn-login" type="button">Iniciar sesión</button>
             <button id="btn-signup" type="button">Crear cuenta</button>
             </div>
 
-            <!-- Visible si HAY sesión -->
+            //-- Visible si HAY sesión -->
             <div id="auth-user" hidden>
             <div id="user-menu-toggle">
                 <img id="user-avatar" src="/static/img/avatar-default.png" alt="Avatar">
@@ -58,11 +58,11 @@ templ Layout(titulo string){
         </div>
     </header>
 
-    <main>
+    <main id="site-main">
         { children... }
     </main>
 
-      <footer id="site-footer">
+    <footer id="site-footer">
     <div id="footer-container">
       <nav id="footer-nav">
         <a id="footer-about" href="/acerca">Acerca de</a>

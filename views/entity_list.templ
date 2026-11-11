@@ -1,27 +1,136 @@
 package views
 
-templ entity_list(entities []Entity) {
-    <section class="entity-list-panel">
-        <div class="entity-list-header">
-            <h2>{ cfg.TituloLista }</h2>
-            <span class="entity-count" id="lista-count">{ strconv.Itoa(cfg.Total) }</span>
-        </div>
-        <ul id="lista">
-            { children... }
-        </ul>
-    </section>
+templ userList(users []User){
+    <section class="entity-list-panel"> 
+		<div class="entity-list-header">
+			<h2>Todos los usuarios</h2>
+			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(users)) }</span>
+		</div>
+		<ul id="lista">
+			for _, user := range users {
+				<li>
+					<span>{ user.UserName }</span>
+					<span>(Amigos: { fmt.Sprintf("%d", user.Amigos) })</span>
+					
+					if user.Photo != 0 {
+						<span>(Foto ID: { fmt.Sprintf("%d", user.Photo) })</span>
+					}
+					
+					//-- Formulario para eliminar el usuario usando user.IDUser -->
+					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/users/%d/delete", user.IDUser)) } style="display:inline;">
+						<button type="submit">Eliminar</button>
+					</form>
+				</li>
+			}
+		</ul>
+	</section>
 }
 
-templ album_list(albums []Album) {
-    <ul id="album-list">
-        { for album in albums {
-            <li class="album-item">
-                <a href="/albums/{album.id_album}">
-                    <h3>{album.album_name}</h3>
-                    <p>Artista: {album.artist_id_artist}</p>
-                    <p>Fecha de lanzamiento: {album.release_date}</p>
-                </a>
-            </li>
-        } }
-    </ul>
+
+templ artistsList(){
+    <section class="entity-list-panel"> 
+		<div class="entity-list-header">
+			<h2>Todos los artistas</h2>
+			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(artists)) }</span>
+		</div>
+        <ul id="lista">
+			for _, artist := range artists {
+				<li>
+					<span>(Artist Name: { fmt.Sprintf("%d", artist.ArtistName)})</span>
+					
+					if artist.Photo != 0 {
+						<span>(Foto ID: { fmt.Sprintf("%d", artist.Photo) })</span>
+					}
+					
+					//-- Formulario para eliminar el artista usando artist.IDArtist -->
+					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/users/%d/delete", artist.IDArtist)) } style="display:inline;">
+						<button type="submit">Eliminar</button>
+					</form>
+				</li>
+			}
+		</ul>
+	</section>
+}
+
+
+templ songList(){
+    <section class="entity-list-panel"> 
+		<div class="entity-list-header">
+			<h2>Todas las canciones</h2>
+			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(songs)) }</span>
+		</div>
+        <ul id="lista">
+			for _, song := range songs {
+				<li>
+					<span>(Song Name: { fmt.Sprintf("%d", song.SongName)})</span>
+					<span>(Likes: { fmt.Sprintf("%d", song.Likes) })</span>
+                    <span>(Duration: { fmt.Sprintf("%d", song.SongDur) })</span>
+                    <span>(Id album: { fmt.Sprintf("%d", song.IDAlbum) })</span>
+					
+					//-- Formulario para eliminar la canción usando song.IDSong -->
+					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/songs/%d/delete", song.IDSong)) } style="display:inline;">
+						<button type="submit">Eliminar</button>
+					</form>
+				</li>
+			}
+		</ul>
+	</section>
+}
+
+
+templ reviewList(reviews []Review){
+    <section class="entity-list-panel"> 
+		<div class="entity-list-header">
+			<h2>Todas las reviews</h2>
+			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(reviews)) }</span>
+		</div>
+        <ul id="lista">
+			for _, review := range reviews {
+				<li>
+					<span>(Review Text: { fmt.Sprintf("%d", review.ReviewText)})</span>
+					<span>(Review Rate: { fmt.Sprintf("%d", review.ReviewRate)})</span>
+					<span>(Review Date: { fmt.Sprintf("%d", review.ReviewDate)})</span>
+					<span>(User (ID): { fmt.Sprintf("%d", review.UserIDUser)})</span>
+					<span>(Song (ID (optional)): { fmt.Sprintf("%d", review.SongIDSong)})</span>
+					<span>(ALbum (ID (optional)): { fmt.Sprintf("%d", review.AlbumIDAlbum)})</span>
+					<span>(Likes: { fmt.Sprintf("%d", review.Likes)})</span>
+        
+					//-- Formulario para eliminar la review usando review.IDReview -->
+					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/reviews/%d/delete", review.IDReview)) } style="display:inline;">
+						<button type="submit">Eliminar</button>
+					</form>
+				</li>
+			}
+		</ul>
+	</section>
+}
+
+
+templ albumList(){
+    <section class="entity-list-panel"> 
+		<div class="entity-list-header">
+			<h2>Todos los álbumes</h2>
+			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(albums)) }</span>
+		</div>
+        <ul id="lista">
+			for _, album := range albums {
+				<li>
+					<span>(Album name: { fmt.Sprintf("%d", album.AlbumName) })</span>
+					<span>(Duration: { fmt.Sprintf("%d", album.AlbumDur) })</span>
+                    <span>(Release date: { fmt.Sprintf("%d", album.ReleaseDate) })</span>
+					<span>(Likes: { fmt.Sprintf("%d", album.Likes) })</span>
+                    <span>(Id artista: { fmt.Sprintf("%d", album.ArtistIDArtist) })</span>
+                    
+					if album.AlbumPh != 0 {
+						<span>(Foto ID: { fmt.Sprintf("%d", album.AlbumPh) })</span>
+					}
+					
+					//-- Formulario para eliminar el álbum usando album.IDAlbum -->
+					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/albums/%d/delete", album.IDAlbum)) } style="display:inline;">
+						<button type="submit">Eliminar</button>
+					</form>
+				</li>
+			}
+		</ul>
+	</section>
 }

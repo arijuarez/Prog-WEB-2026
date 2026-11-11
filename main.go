@@ -57,33 +57,28 @@ func main() {
 	defer db.Close()
 	log.Println("Conexión a PostgreSQL establecida correctamente")
 	queries := bd.New(db)
-
+	/*
 	userH := Handlers.NewUserHandler(queries)
-	artistH := Handlers.NewArtistHandler(queries)
-	songH := Handlers.NewSongHandler(queries)
-	albumH := Handlers.NewAlbumHandler(queries)
-	reviewH := Handlers.NewReviewHandler(queries)
-	artistSongH := Handlers.NewArtistSongHandler(queries)
-
 	// API REST
 	http.HandleFunc("/users", userH.UsersHandler)
-	http.HandleFunc("/users/", userH.UserHandler)
-	http.HandleFunc("/artists", artistH.ArtistsHandler)
-	http.HandleFunc("/artists/", artistH.ArtistHandler)
-	http.HandleFunc("/songs", songH.SongsHandler)
-	http.HandleFunc("/songs/", songH.SongHandler)
-	http.HandleFunc("/albums", albumH.AlbumsHandler)
-	http.HandleFunc("/albums/", albumH.AlbumHandler)
-	http.HandleFunc("/reviews", reviewH.ReviewsHandler)
-	http.HandleFunc("/reviews/", reviewH.ReviewHandler)
-	http.HandleFunc("/artist-songs", artistSongH.ArtistSongsHandler)
-	http.HandleFunc("/artist-songs/", artistSongH.ArtistSongHandler)
 
 	// Frontend: index.html, styles.css y app.js salen de ./static
 	fileServer := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fileServer)
 	// Para que /static/img/... (rutas de tu HTML) también funcione
 	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
+*/
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			handleGET(w, r, queries)
+		case http.MethodPost:
+			handlePOST(w, r, queries)
+		default:
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
 
 	log.Println("Server starting on :8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))

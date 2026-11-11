@@ -1,0 +1,256 @@
+package views
+
+import (
+    "github.com/arijuarez/Prog-WEB-2026/tp5/bd"
+)
+
+templ IndexSongs(songs []db.ListSongs){
+    @layout_entities("Canciones") {
+        <section class="entity-hero">
+            <div class="entity-hero-inner">
+            <span class="entity-hero-label">Explorar</span>
+            <h1>Canciones</h1>
+            <p class="entity-hero-desc">Sumá tracks y gestioná el catálogo musical.</p>
+            </div>
+        </section> 
+        <div class="entity-body">
+            <aside class="entity-form-panel">
+                <h2>+ Nueva canción</h2>
+                @formSong()
+            </aside>
+            @songList(songs)
+        </div>
+    }
+}
+
+templ IndexReviews(reviews []db.ListReviews){
+    @layout_entities("Reviews") {
+    <section class="entity-hero">
+        <div class="entity-hero-inner">
+        <span class="entity-hero-label">Comunidad</span>
+        <h1>Reseñas</h1>
+        <p class="entity-hero-desc">Leé y publicá reseñas de canciones y álbumes.</p>
+        </div>
+    </section>
+    <div class="entity-body">
+    <aside class="entity-form-panel">
+      <h2>+ Nueva reseña</h2>
+      @formReview()
+      </aside>
+      @reviewList(reviews)
+      </div>
+    }
+}
+
+templ IndexAlbums(albums []db.ListAlbums){
+    @layout_entities("Álbumes") {
+        <section class="entity-hero">
+            <div class="entity-hero-inner">
+            <span class="entity-hero-label">Explorar</span>
+            <h1>Álbumes</h1>
+            <p class="entity-hero-desc">Sumá álbumes y gestioná el catálogo musical.</p>
+            </div>
+        </section> 
+        <div class="entity-body">
+            <aside class="entity-form-panel">
+                <h2>+ Nuevo álbum</h2>
+                @formAlbum()
+            </aside>
+            @albumList(albums)
+        </div>
+    }
+}
+
+templ IndexUsers(users []db.ListUsers){
+    @layout_entities("Usuarios") {
+        <section class="entity-hero">
+            <div class="entity-hero-inner">
+            <span class="entity-hero-label">Explorar</span>
+            <h1>Usuarios</h1>
+            <p class="entity-hero-desc">Crea usuarios y busca amigos.</p>
+            </div>
+        </section> 
+        <div class="entity-body">
+            <aside class="entity-form-panel">
+                <h2>+ Nuevo usuario</h2>
+                @formUser()
+            </aside>
+            @ userList(users)
+        </div>
+    }
+}
+
+templ IndexArtists(artists []db.ListArtist){
+    @layout_entities("Artistas") {
+    <section class="entity-hero">
+        <div class="entity-hero-inner">
+        <span class="entity-hero-label">Comunidad</span>
+        <h1>Artistas</h1>
+        <p class="entity-hero-desc">Agregá y gestioná los artistas de la plataforma.</p>
+        </div>
+    </section>
+    <div class="entity-body">
+    <aside class="entity-form-panel">
+      <h2>+ Nuevo artista</h2>
+      @formArtist()
+      </aside>
+      @artistsList(artists)
+      </div>
+    }
+}
+
+templ IndexMain(){
+    @layout("JamBox — Reseñas de canciones, álbumes y artistas") {
+        <section id="hero">
+            <div id="hero-backdrop"></div>
+            <div id="hero-content">
+                <h1 id="hero-title">Registrá lo que escuchás. Contá lo que sentís.</h1>
+                <p id="hero-subtitle">Reseñá canciones, álbumes y artistas, y descubrí qué escuchan tus amigos.</p>
+                <button id="hero-cta" type="button">Empezar, es gratis</button>
+                <p id="hero-tagline">La red social para quienes aman la música.</p>
+            </div>
+        </section>
+
+        //-- ============ FUNCIONALIDADES ============ -->
+        <section id="features">
+        <h2 id="features-title">JamBox te permite...</h2>
+        <div id="features-grid">
+            <div id="feature-log" class="feature">
+            <h3 id="feature-log-title">Registrar</h3>
+            <p id="feature-log-text">Llevá la cuenta de todo lo que escuchaste, o empezá desde el día de hoy.</p>
+            </div>
+            <div id="feature-rate" class="feature">
+            <h3 id="feature-rate-title">Puntuar</h3>
+            <p id="feature-rate-text">Calificá de media estrella a cinco y guardá tus favoritos.</p>
+            </div>
+            <div id="feature-review" class="feature">
+            <h3 id="feature-review-title">Reseñar</h3>
+            <p id="feature-review-text">Escribí y compartí tu opinión sobre cualquier canción o álbum.</p>
+            </div>
+            <div id="feature-follow" class="feature">
+            <h3 id="feature-follow-title">Seguir</h3>
+            <p id="feature-follow-text">Seguí a tus amigos y a otros melómanos para ver qué escuchan.</p>
+            </div>
+            <div id="feature-lists" class="feature">
+            <h3 id="feature-lists-title">Listar</h3>
+            <p id="feature-lists-text">Armá y compartí listas: tus mejores discos del año, canciones para viajar...</p>
+            </div>
+        </div>
+        </section>
+
+        //-- ============ NOVEDADES / POPULARES ============ -->
+        <section id="popular-albums">
+        <div id="popular-albums-header" class="section-header">
+            <h2 id="popular-albums-title">Álbumes populares esta semana</h2>
+            <a id="popular-albums-more" href="/albumes">Ver más</a>
+        </div>
+        <div id="popular-albums-grid" class="cover-grid">
+            //-- Ejemplo de tarjeta; repetir con un range de Go -->
+            <article id="album-card-1" class="cover-card" data-album-id="1">
+            <a id="album-link-1" href="/album/1">
+                <img id="album-cover-1" src="/static/img/placeholder-cover.png" alt="Portada del álbum"></img>
+            </a>
+            <div id="album-info-1" class="cover-info">
+                <span id="album-rating-1" class="rating">★ 4.2</span>
+                <span id="album-reviews-1" class="reviews-count">1.2k reseñas</span>
+            </div>
+            </article>
+        </div>
+        </section>
+
+        <section id="popular-songs">
+        <div id="popular-songs-header" class="section-header">
+            <h2 id="popular-songs-title">Canciones del momento</h2>
+            <a id="popular-songs-more" href="/canciones">Ver más</a>
+        </div>
+        <div id="popular-songs-grid" class="cover-grid">
+            <article id="song-card-1" class="cover-card" data-song-id="1">
+            <a id="song-link-1" href="/cancion/1">
+                <img id="song-cover-1" src="/static/img/placeholder-cover.png" alt="Portada de la canción">
+            </a>
+            <div id="song-info-1" class="cover-info">
+                <span id="song-title-1" class="track-title">Título</span>
+                <span id="song-rating-1" class="rating">★ 4.0</span>
+            </div>
+            </article>
+        </div>
+        </section>
+
+        <section id="popular-artists">
+        <div id="popular-artists-header" class="section-header">
+            <h2 id="popular-artists-title">Artistas en tendencia</h2>
+            <a id="popular-artists-more" href="/artistas">Ver más</a>
+        </div>
+        <div id="popular-artists-grid" class="cover-grid">
+            <article id="artist-card-1" class="cover-card" data-artist-id="1">
+            <a id="artist-link-1" href="/artista/1">
+                <img id="artist-photo-1" src="/static/img/placeholder-artist.png" alt="Foto del artista">
+            </a>
+            <span id="artist-name-1" class="artist-name">Artista</span>
+            </article>
+        </div>
+        </section>
+
+        //-- ============ RESEÑAS Y LISTAS ============ -->
+        <div id="community-columns">
+
+        <section id="popular-reviews">
+            <div id="popular-reviews-header" class="section-header">
+            <h2 id="popular-reviews-title">Reseñas populares</h2>
+            <a id="popular-reviews-more" href="/resenas">Más reseñas</a>
+            </div>
+        </section>
+
+        <aside id="sidebar">
+            <section id="popular-lists">
+            <div id="popular-lists-header" class="section-header">
+                <h2 id="popular-lists-title">Listas populares</h2>
+                <a id="popular-lists-more" href="/listas">Más listas</a>
+            </div>
+            <div id="popular-lists-container">
+                <article id="list-card-1" class="list-card" data-list-id="1">
+                <div id="list-covers-1" class="list-covers"></div>
+                <h3 id="list-title-1" class="list-title"><a href="/lista/1">Título de la lista</a></h3>
+                <span id="list-author-1" class="list-author">por usuario</span>
+                <span id="list-count-1" class="list-count">12 elementos</span>
+                </article>
+            </div>
+            </section>
+
+            <section id="recent-activity">
+            <h2 id="recent-activity-title">Actividad reciente</h2>
+            <ul id="recent-activity-list"></ul>
+            </section>
+        </aside>
+
+        </div>
+
+        //-- ============ CREAR CUENTA ============ -->
+        <section id="bottom-cta">
+        <h2 id="bottom-cta-title">Tu historia musical empieza acá.</h2>
+        <button id="bottom-cta-btn" type="button">Crear mi cuenta</button>
+        </section>
+    
+        //-- ============ MODALES ============ -->
+        <div id="modal-overlay" hidden>
+
+            <div id="modal-login" class="modal" hidden>
+            <button id="modal-login-close" class="modal-close" type="button">×</button>
+            <h2 id="modal-login-title">Iniciar sesión</h2>
+                @formLogin()
+            </div>
+
+            <div id="modal-signup" class="modal" hidden>
+            <button id="modal-signup-close" class="modal-close" type="button">×</button>
+            <h2 id="modal-signup-title">Crear cuenta</h2>
+                @formSignup()
+            </div>
+
+            <div id="modal-review" class="modal" hidden>
+            <button id="modal-review-close" class="modal-close" type="button">×</button>
+            <h2 id="modal-review-title">Nueva reseña</h2>
+                @formModalReview()
+            </div>
+        </div>
+    }
+}

@@ -1,6 +1,8 @@
 package views
 
-import https://github.com/arijuarez/Prog-WEB-2026/tree/tp4
+import (
+    "github.com/arijuarez/Prog-WEB-2026/tp5/bd"
+)
 
 empl formAlbum() {
     <form id="form-entidad">
@@ -27,7 +29,6 @@ templ formSong() {
     <form id="form-entidad">
         <input type="text" name="song_name" placeholder="Título de la canción" required/>
         <input type="number" name="album_id_album" placeholder="ID del álbum" min="1" required/>
-        <input type="number" name="song_ph" placeholder="ID de portada (opcional)"/>
         <input type="number" name="song_dur" placeholder="Duración (segundos, opcional)"/>
         <input type="number" name="likes" placeholder="Likes (opcional)"/>
         <button type="submit">Crear canción</button>
@@ -41,6 +42,7 @@ templ formReview() {
         <input type="number" name="song_id_song"    placeholder="ID de canción (opcional)">
         <input type="number" name="album_id_album"  placeholder="ID de álbum (opcional)">
         <input type="number" name="review_rate"     placeholder="Calificación (0 – 5)" min="0" max="5" step="0.5" required>
+        <input type="number" name="likes" placeholder="Likes de la review" min="0">
         <textarea            name="review_text"     rows="5" placeholder="Escribí tu reseña..." required></textarea>
         <button type="submit">Publicar reseña</button>
       </form>
@@ -49,31 +51,51 @@ templ formReview() {
 temple formUser() {
     <form id="form-entidad">
         <input type="text" name="user_name" placeholder="Nombre de usuario" required/>
+        <input type="number" name="amigos" placeholder="ID de foto (opcional)"/>
         <input type="number" name="user_ph" placeholder="ID de foto (opcional)"/>
         <button type="submit">Crear usuario</button>
     </form>
 }
 
-templ userList(){
-
+temple formLogin(){
+    <form id="login-form">
+      <input id="login-username" type="text" name="username" placeholder="Usuario o email" required>
+      <input id="login-password" type="password" name="password" placeholder="Contraseña" required>
+      <p id="login-error" class="form-error" hidden></p>
+      <button id="login-submit" type="submit">Entrar</button>
+    </form>
 }
 
-
-templ artistsList(){
-    
+templ formSignup(){
+    <form id="signup-form">
+        <input id="signup-email" type="email" name="email" placeholder="Email" required>
+        <input id="signup-username" type="text" name="username" placeholder="Nombre de usuario" required>
+        <input id="signup-password" type="password" name="password" placeholder="Contraseña" required>
+        <p id="signup-error" class="form-error" hidden></p>
+        <button id="signup-submit" type="submit">Crear cuenta</button>
+    </form>
 }
 
-
-templ songList(){
-    
-}
-
-
-templ reviewList(){
-    
-}
-
-
-templ albumList(){
-    
+templ formModalReview(){
+    <form id="review-form">
+        <input id="review-user-id" type="number" min="1" name="user_id" placeholder="Tu ID de usuario" required>
+        <select id="review-type" name="type" required>
+          <option value="song">Canción</option>
+          <option value="album">Álbum</option>
+          <option value="artist">Artista</option>
+        </select>
+        <input id="review-target-id" type="number" min="1" name="target_id" placeholder="ID de la canción, álbum o artista" required>
+        <input id="review-search" type="text" name="target" placeholder="Buscá una canción, álbum o artista" required>
+        <div id="review-rating" class="rating-input">
+          <button id="star-1" type="button" data-value="1">★</button>
+          <button id="star-2" type="button" data-value="2">★</button>
+          <button id="star-3" type="button" data-value="3">★</button>
+          <button id="star-4" type="button" data-value="4">★</button>
+          <button id="star-5" type="button" data-value="5">★</button>
+          <input id="review-rating-value" type="hidden" name="rating" value="0">
+        </div>
+        <textarea id="review-content" name="content" rows="6" placeholder="Escribí tu reseña..."></textarea>
+        <label id="review-spoiler-label"><input id="review-spoiler" type="checkbox" name="spoiler"> Contiene spoilers</label>
+        <button id="review-submit" type="submit">Publicar</button>
+    </form>
 }
