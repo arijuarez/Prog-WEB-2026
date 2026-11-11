@@ -1,0 +1,27 @@
+package views
+
+templ entity_list(entities []Entity) {
+    <section class="entity-list-panel">
+        <div class="entity-list-header">
+            <h2>{ cfg.TituloLista }</h2>
+            <span class="entity-count" id="lista-count">{ strconv.Itoa(cfg.Total) }</span>
+        </div>
+        <ul id="lista">
+            { children... }
+        </ul>
+    </section>
+}
+
+templ album_list(albums []Album) {
+    <ul id="album-list">
+        { for album in albums {
+            <li class="album-item">
+                <a href="/albums/{album.id_album}">
+                    <h3>{album.album_name}</h3>
+                    <p>Artista: {album.artist_id_artist}</p>
+                    <p>Fecha de lanzamiento: {album.release_date}</p>
+                </a>
+            </li>
+        } }
+    </ul>
+}

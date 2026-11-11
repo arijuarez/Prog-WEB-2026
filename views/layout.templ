@@ -1,0 +1,79 @@
+package views
+
+templ Layout(titulo string){
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JamBox — Reseñas de canciones, álbumes y artistas</title>
+  <link rel="stylesheet" href="static/styles.css">
+</head>
+<body id="body">
+    <header id="site-header">
+        <div id="header-container">
+        <a id="logo" href="/">JamBox</a>
+
+        <nav id="main-nav">
+            <ul id="nav-list">
+            <li id="nav-songs"><a href="/songs.html">Canciones</a></li>
+            <li id="nav-artists"><a href="/artistas.html">Artistas</a></li>
+            <li id="nav-albums"><a href="/albums.html">Álbumes</a></li>
+            <li id="nav-reviews"><a href="/reviews.html">Reseñas</a></li>
+            <li id="nav-members"><a href="/users.html">Usuarios</a></li>
+            </ul>
+        </nav>
+
+        <div id="header-actions">
+            <!-- Visible si NO hay sesión -->
+            <div id="auth-guest">
+            <button id="btn-login" type="button">Iniciar sesión</button>
+            <button id="btn-signup" type="button">Crear cuenta</button>
+            </div>
+
+            <!-- Visible si HAY sesión -->
+            <div id="auth-user" hidden>
+            <div id="user-menu-toggle">
+                <img id="user-avatar" src="/static/img/avatar-default.png" alt="Avatar">
+                <span id="user-name">usuario</span>
+            </div>
+            <div id="user-menu" hidden>
+                <a id="menu-profile" href="/perfil">Perfil</a>
+                <a id="menu-diary" href="/diario">Diario</a>
+                <a id="menu-reviews" href="/resenas">Reseñas</a>
+                <a id="menu-listenlist" href="/pendientes">Para escuchar</a>
+                <a id="menu-settings" href="/ajustes">Ajustes</a>
+                <button id="btn-logout" type="button">Cerrar sesión</button>
+            </div>
+            </div>
+
+            <button id="btn-new-review" type="button">+ Reseña</button>
+
+            <form id="search-form" action="/buscar" method="get">
+            <input id="search-input" type="search" name="q" placeholder="Buscar canciones, álbumes, artistas" autocomplete="off">
+            <button id="search-submit" type="submit">Buscar</button>
+            <div id="search-results" hidden></div>
+            </form>
+        </div>
+        </div>
+    </header>
+
+    <main>
+        { children... }
+    </main>
+
+      <footer id="site-footer">
+    <div id="footer-container">
+      <nav id="footer-nav">
+        <a id="footer-about" href="/acerca">Acerca de</a>
+        <a id="footer-help" href="/ayuda">Ayuda</a>
+        <a id="footer-terms" href="/terminos">Términos</a>
+        <a id="footer-privacy" href="/privacidad">Privacidad</a>
+        <a id="footer-contact" href="/contacto">Contacto</a>
+      </nav>
+      <p id="footer-copy">© 2026 JamBox. Hecho por y para amantes de la música.</p>
+    </div>
+  </footer>
+</body>
+</html>
+}

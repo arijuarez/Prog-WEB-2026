@@ -1,0 +1,43 @@
+package views
+
+templ Layout(titulo string){
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JamBox </title>
+  <link rel="stylesheet" href="static/styles.css">
+  <link rel="stylesheet" href="static/entidades.css">
+</head>
+<body id="body">
+    <header id="page-header">
+        <a class="page-logo" href="/">JamBox</a>
+        <nav id="page-nav">
+            <li id="nav-songs"><a href="/songs.html">Canciones</a></li>
+            <li id="nav-artists"><a href="/artistas.html">Artistas</a></li>
+            <li id="nav-albums"><a href="/albums.html">Álbumes</a></li>
+            <li id="nav-reviews"><a href="/reviews.html">Reseñas</a></li>
+            <li id="nav-members"><a href="/users.html">Usuarios</a></li>
+        </nav>
+    </header>
+
+    <main>
+        { children... }
+    </main>
+
+      <footer id="site-footer">
+    <div id="footer-container">
+      <nav id="footer-nav">
+        <a id="footer-about" href="/acerca">Acerca de</a>
+        <a id="footer-help" href="/ayuda">Ayuda</a>
+        <a id="footer-terms" href="/terminos">Términos</a>
+        <a id="footer-privacy" href="/privacidad">Privacidad</a>
+        <a id="footer-contact" href="/contacto">Contacto</a>
+      </nav>
+      <p id="footer-copy">© 2026 JamBox. Hecho por y para amantes de la música.</p>
+    </div>
+  </footer>
+</body>
+</html>
+}

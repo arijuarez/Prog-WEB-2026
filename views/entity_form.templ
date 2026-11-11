@@ -1,0 +1,79 @@
+package views
+
+import https://github.com/arijuarez/Prog-WEB-2026/tree/tp4
+
+empl formAlbum() {
+    <form id="form-entidad">
+        <input type="text" name="album_name" placeholder="Título del álbum" required/>
+        <input type="number" name="artist_id_artist" placeholder="ID del artista" min="1" required/>
+        <input type="date" name="release_date"/>
+        <input type="number" name="album_ph" placeholder="ID de portada (opcional)"/>
+        <input type="number" name="album_dur" placeholder="Duración (segundos, opcional)"/>
+        <input type="number" name="likes" placeholder="Likes (opcional)"/>
+        <button type="submit">Crear álbum</button>
+    </form>
+}
+
+templ formArtist() {
+    <form id="form-entidad">
+        <input type="text" name="artist_name" placeholder="Nombre del artista" required/>
+        <input type="number" name="artist_ph" placeholder="ID de foto (opcional)"/>
+        <input type="number" name="likes" placeholder="Likes (opcional)"/>
+        <button type="submit">Crear artista</button>
+    </form>
+}
+
+templ formSong() {
+    <form id="form-entidad">
+        <input type="text" name="song_name" placeholder="Título de la canción" required/>
+        <input type="number" name="album_id_album" placeholder="ID del álbum" min="1" required/>
+        <input type="number" name="song_ph" placeholder="ID de portada (opcional)"/>
+        <input type="number" name="song_dur" placeholder="Duración (segundos, opcional)"/>
+        <input type="number" name="likes" placeholder="Likes (opcional)"/>
+        <button type="submit">Crear canción</button>
+    </form>
+}
+
+templ formReview() {
+      <form id="form-entidad">
+        <input type="date"   name="review_date"     placeholder="Fecha de la reseña" required>
+        <input type="number" name="user_id_user"    placeholder="ID de usuario" min="1" required>
+        <input type="number" name="song_id_song"    placeholder="ID de canción (opcional)">
+        <input type="number" name="album_id_album"  placeholder="ID de álbum (opcional)">
+        <input type="number" name="review_rate"     placeholder="Calificación (0 – 5)" min="0" max="5" step="0.5" required>
+        <textarea            name="review_text"     rows="5" placeholder="Escribí tu reseña..." required></textarea>
+        <button type="submit">Publicar reseña</button>
+      </form>
+}
+
+temple formUser() {
+    <form id="form-entidad">
+        <input type="text" name="user_name" placeholder="Nombre de usuario" required/>
+        <input type="number" name="user_ph" placeholder="ID de foto (opcional)"/>
+        <button type="submit">Crear usuario</button>
+    </form>
+}
+
+templ userList(){
+
+}
+
+
+templ artistsList(){
+    
+}
+
+
+templ songList(){
+    
+}
+
+
+templ reviewList(){
+    
+}
+
+
+templ albumList(){
+    
+}
