@@ -10,10 +10,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/arijuarez/Prog-WEB-2026/bd"
+	db "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 )
 
-func IndexSongs(songs []db.ListSongs) templ.Component {
+func IndexSongs(songs []db.Song) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -72,7 +72,7 @@ func IndexSongs(songs []db.ListSongs) templ.Component {
 	})
 }
 
-func IndexReviews(reviews []db.ListReviews) templ.Component {
+func IndexReviews(reviews []db.Review) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -131,7 +131,7 @@ func IndexReviews(reviews []db.ListReviews) templ.Component {
 	})
 }
 
-func IndexAlbums(albums []db.ListAlbums) templ.Component {
+func IndexAlbums(albums []db.Album) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -190,7 +190,7 @@ func IndexAlbums(albums []db.ListAlbums) templ.Component {
 	})
 }
 
-func IndexUsers(users []db.ListUsers) templ.Component {
+func IndexUsers(users []db.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -249,7 +249,7 @@ func IndexUsers(users []db.ListUsers) templ.Component {
 	})
 }
 
-func IndexArtists(artists []db.ListArtist) templ.Component {
+func IndexArtists(artists []db.Artist) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

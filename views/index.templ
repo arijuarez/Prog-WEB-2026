@@ -1,10 +1,10 @@
 package views
 
 import (
-    "github.com/arijuarez/Prog-WEB-2026/bd"
+    db "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 )
 
-templ IndexSongs(songs []db.ListSongs){
+templ IndexSongs(songs []db.Song){
     @layout_entities("Canciones") {
         <section class="entity-hero">
             <div class="entity-hero-inner">
@@ -23,7 +23,7 @@ templ IndexSongs(songs []db.ListSongs){
     }
 }
 
-templ IndexReviews(reviews []db.ListReviews){
+templ IndexReviews(reviews []db.Review){
     @layout_entities("Reviews") {
     <section class="entity-hero">
         <div class="entity-hero-inner">
@@ -42,7 +42,7 @@ templ IndexReviews(reviews []db.ListReviews){
     }
 }
 
-templ IndexAlbums(albums []db.ListAlbums){
+templ IndexAlbums(albums []db.Album){
     @layout_entities("Álbumes") {
         <section class="entity-hero">
             <div class="entity-hero-inner">
@@ -61,7 +61,7 @@ templ IndexAlbums(albums []db.ListAlbums){
     }
 }
 
-templ IndexUsers(users []db.ListUsers){
+templ IndexUsers(users []db.User){
     @layout_entities("Usuarios") {
         <section class="entity-hero">
             <div class="entity-hero-inner">
@@ -80,7 +80,7 @@ templ IndexUsers(users []db.ListUsers){
     }
 }
 
-templ IndexArtists(artists []db.ListArtist){
+templ IndexArtists(artists []db.Artist){
     @layout_entities("Artistas") {
     <section class="entity-hero">
         <div class="entity-hero-inner">

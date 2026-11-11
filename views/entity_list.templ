@@ -1,6 +1,11 @@
 package views
 
-templ userList(users []User){
+import (
+	"fmt"
+	db "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
+)
+
+templ userList(users []db.User){
     <section class="entity-list-panel"> 
 		<div class="entity-list-header">
 			<h2>Todos los usuarios</h2>
@@ -27,7 +32,7 @@ templ userList(users []User){
 }
 
 
-templ artistsList(){
+templ artistsList(artists []db.Artist){
     <section class="entity-list-panel"> 
 		<div class="entity-list-header">
 			<h2>Todos los artistas</h2>
@@ -36,14 +41,14 @@ templ artistsList(){
         <ul id="lista">
 			for _, artist := range artists {
 				<li>
-					<span>(Artist Name: { fmt.Sprintf("%d", artist.ArtistName)})</span>
+					<span>(Artist Name: { fmt.Sprintf("%s", artist.ArtistName)})</span>
 					
 					if artist.Photo != 0 {
 						<span>(Foto ID: { fmt.Sprintf("%d", artist.Photo) })</span>
 					}
 					
 					//-- Formulario para eliminar el artista usando artist.IDArtist -->
-					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/users/%d/delete", artist.IDArtist)) } style="display:inline;">
+					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/artists/%d/delete", artist.IDArtist)) } style="display:inline;">
 						<button type="submit">Eliminar</button>
 					</form>
 				</li>
@@ -53,7 +58,7 @@ templ artistsList(){
 }
 
 
-templ songList(){
+templ songList(songs []db.Song){
     <section class="entity-list-panel"> 
 		<div class="entity-list-header">
 			<h2>Todas las canciones</h2>
@@ -62,10 +67,10 @@ templ songList(){
         <ul id="lista">
 			for _, song := range songs {
 				<li>
-					<span>(Song Name: { fmt.Sprintf("%d", song.SongName)})</span>
+					<span>(Song Name: { fmt.Sprintf("%s", song.SongName)})</span>
 					<span>(Likes: { fmt.Sprintf("%d", song.Likes) })</span>
                     <span>(Duration: { fmt.Sprintf("%d", song.SongDur) })</span>
-                    <span>(Id album: { fmt.Sprintf("%d", song.IDAlbum) })</span>
+                    <span>(Id album: { fmt.Sprintf("%d", song.AlbumIDAlbum) })</span>
 					
 					//-- Formulario para eliminar la canción usando song.IDSong -->
 					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/songs/%d/delete", song.IDSong)) } style="display:inline;">
@@ -78,7 +83,7 @@ templ songList(){
 }
 
 
-templ reviewList(reviews []Review){
+templ reviewList(reviews []db.Review){
     <section class="entity-list-panel"> 
 		<div class="entity-list-header">
 			<h2>Todas las reviews</h2>
@@ -87,12 +92,16 @@ templ reviewList(reviews []Review){
         <ul id="lista">
 			for _, review := range reviews {
 				<li>
-					<span>(Review Text: { fmt.Sprintf("%d", review.ReviewText)})</span>
-					<span>(Review Rate: { fmt.Sprintf("%d", review.ReviewRate)})</span>
-					<span>(Review Date: { fmt.Sprintf("%d", review.ReviewDate)})</span>
+					<span>(Review Text: { fmt.Sprintf("%s", review.ReviewText)})</span>
+					<span>(Review Rate: { fmt.Sprintf("%.1f", review.ReviewRate)})</span>
+					<span>(Review Date: { fmt.Sprintf("%v", review.ReviewDate)})</span>
 					<span>(User (ID): { fmt.Sprintf("%d", review.UserIDUser)})</span>
-					<span>(Song (ID (optional)): { fmt.Sprintf("%d", review.SongIDSong)})</span>
-					<span>(ALbum (ID (optional)): { fmt.Sprintf("%d", review.AlbumIDAlbum)})</span>
+					if review.SongIDSong.Valid {
+						<span>(Song (ID (optional)): { fmt.Sprintf("%d", review.SongIDSong.Int32)})</span>
+					}
+					if review.AlbumIDAlbum.Valid {
+						<span>(ALbum (ID (optional)): { fmt.Sprintf("%d", review.AlbumIDAlbum.Int32)})</span>
+					}
 					<span>(Likes: { fmt.Sprintf("%d", review.Likes)})</span>
         
 					//-- Formulario para eliminar la review usando review.IDReview -->
@@ -106,7 +115,7 @@ templ reviewList(reviews []Review){
 }
 
 
-templ albumList(){
+templ albumList(albums []db.Album){
     <section class="entity-list-panel"> 
 		<div class="entity-list-header">
 			<h2>Todos los álbumes</h2>
@@ -115,9 +124,9 @@ templ albumList(){
         <ul id="lista">
 			for _, album := range albums {
 				<li>
-					<span>(Album name: { fmt.Sprintf("%d", album.AlbumName) })</span>
+					<span>(Album name: { fmt.Sprintf("%s", album.AlbumName) })</span>
 					<span>(Duration: { fmt.Sprintf("%d", album.AlbumDur) })</span>
-                    <span>(Release date: { fmt.Sprintf("%d", album.ReleaseDate) })</span>
+                    <span>(Release date: { fmt.Sprintf("%v", album.ReleaseDate) })</span>
 					<span>(Likes: { fmt.Sprintf("%d", album.Likes) })</span>
                     <span>(Id artista: { fmt.Sprintf("%d", album.ArtistIDArtist) })</span>
                     

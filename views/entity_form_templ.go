@@ -9,10 +9,6 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"github.com/arijuarez/Prog-WEB-2026/bd"
-)
-
 func formAlbum() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -30,7 +26,7 @@ func formAlbum() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form id=\"form-entidad\"><input type=\"text\" name=\"album_name\" placeholder=\"Título del álbum\" required> <input type=\"number\" name=\"artist_id_artist\" placeholder=\"ID del artista\" min=\"1\" required> <input type=\"date\" name=\"release_date\"> <input type=\"number\" name=\"album_ph\" placeholder=\"ID de portada (opcional)\"> <input type=\"number\" name=\"album_dur\" placeholder=\"Duración (segundos, opcional)\"> <input type=\"number\" name=\"likes\" placeholder=\"Likes (opcional)\"> <button type=\"submit\">Crear álbum</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<form id=\"form-entidad\" method=\"POST\" action=\"/albums\"><input type=\"text\" name=\"album_name\" placeholder=\"Título del álbum\" required> <input type=\"number\" name=\"artist_id_artist\" placeholder=\"ID del artista\" min=\"1\" required> <input type=\"date\" name=\"release_date\" required> <input type=\"number\" name=\"album_ph\" placeholder=\"ID de portada (opcional)\" min=\"0\"> <input type=\"number\" name=\"album_dur\" placeholder=\"Duración (segundos, opcional)\" min=\"0\"> <input type=\"number\" name=\"likes\" placeholder=\"Likes (opcional)\" min=\"0\"> <button type=\"submit\">Crear álbum</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +51,7 @@ func formArtist() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<form id=\"form-entidad\"><input type=\"text\" name=\"artist_name\" placeholder=\"Nombre del artista\" required> <input type=\"number\" name=\"artist_ph\" placeholder=\"ID de foto (opcional)\"> <input type=\"number\" name=\"likes\" placeholder=\"Likes (opcional)\"> <button type=\"submit\">Crear artista</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<form id=\"form-entidad\" method=\"POST\" action=\"/artists\"><input type=\"text\" name=\"artist_name\" placeholder=\"Nombre del artista\" required> <input type=\"text\" name=\"artist_bio\" placeholder=\"Descripción (opcional)\"> <input type=\"number\" name=\"artist_ph\" placeholder=\"ID de foto (opcional)\" min=\"0\"> <button type=\"submit\">Crear artista</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,7 +76,7 @@ func formSong() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<form id=\"form-entidad\"><input type=\"text\" name=\"song_name\" placeholder=\"Título de la canción\" required> <input type=\"number\" name=\"album_id_album\" placeholder=\"ID del álbum\" min=\"1\" required> <input type=\"number\" name=\"song_dur\" placeholder=\"Duración (segundos, opcional)\"> <input type=\"number\" name=\"likes\" placeholder=\"Likes (opcional)\"> <button type=\"submit\">Crear canción</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<form id=\"form-entidad\" method=\"POST\" action=\"/songs\"><input type=\"text\" name=\"song_name\" placeholder=\"Título de la canción\" required> <input type=\"number\" name=\"album_id_album\" placeholder=\"ID del álbum\" min=\"1\" required> <input type=\"number\" name=\"song_dur\" placeholder=\"Duración (segundos, opcional)\" min=\"0\"> <input type=\"number\" name=\"likes\" placeholder=\"Likes (opcional)\" min=\"0\"> <button type=\"submit\">Crear canción</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,7 +101,7 @@ func formReview() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form id=\"form-entidad\"><input type=\"date\" name=\"review_date\" placeholder=\"Fecha de la reseña\" required> <input type=\"number\" name=\"user_id_user\" placeholder=\"ID de usuario\" min=\"1\" required> <input type=\"number\" name=\"song_id_song\" placeholder=\"ID de canción (opcional)\"> <input type=\"number\" name=\"album_id_album\" placeholder=\"ID de álbum (opcional)\"> <input type=\"number\" name=\"review_rate\" placeholder=\"Calificación (0 – 5)\" min=\"0\" max=\"5\" step=\"0.5\" required> <input type=\"number\" name=\"likes\" placeholder=\"Likes de la review\" min=\"0\"> <textarea name=\"review_text\" rows=\"5\" placeholder=\"Escribí tu reseña...\" required></textarea> <button type=\"submit\">Publicar reseña</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form id=\"form-entidad\" method=\"POST\" action=\"/reviews\"><input type=\"date\" name=\"review_date\" placeholder=\"Fecha de la reseña\" required> <input type=\"number\" name=\"user_id_user\" placeholder=\"ID de usuario\" min=\"1\" required> <input type=\"number\" name=\"song_id_song\" placeholder=\"ID de canción (opcional)\" min=\"1\"> <input type=\"number\" name=\"album_id_album\" placeholder=\"ID de álbum (opcional)\" min=\"1\"> <input type=\"number\" name=\"review_rate\" placeholder=\"Calificación (0 – 5)\" min=\"0\" max=\"5\" step=\"0.5\" required> <input type=\"number\" name=\"likes\" placeholder=\"Likes de la review (opcional)\" min=\"0\"> <textarea name=\"review_text\" rows=\"5\" placeholder=\"Escribí tu reseña...\" required></textarea> <button type=\"submit\">Publicar reseña</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -130,7 +126,7 @@ func formUser() templ.Component {
 		}
 		ctx = templ.InitializeContext(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<form id=\"form-entidad\"><input type=\"text\" name=\"user_name\" placeholder=\"Nombre de usuario\" required> <input type=\"number\" name=\"amigos\" placeholder=\"ID de foto (opcional)\"> <input type=\"number\" name=\"user_ph\" placeholder=\"ID de foto (opcional)\"> <button type=\"submit\">Crear usuario</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<form id=\"form-entidad\" method=\"POST\" action=\"/users\"><input type=\"text\" name=\"user_name\" placeholder=\"Nombre de usuario\" required> <input type=\"number\" name=\"amigos\" placeholder=\"Cantidad de amigos (opcional)\" min=\"0\"> <input type=\"number\" name=\"user_ph\" placeholder=\"ID de foto (opcional)\" min=\"0\"> <button type=\"submit\">Crear usuario</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -70,9 +70,9 @@ RESUMEN DE RELACIONES:
 ## 2. Estructura de Directorio
 DataModelerSQL.png
 
-Prog-WEB-2026/
+TPE/
 ├── bd/
-│   ├── sqlc/
+│   ├── sqlc/                       -- Código autogenerado por sqlc (no editar)
 │   │   ├── db.go
 │   │   ├── models.go
 │   │   └── queries.sql.go
@@ -81,19 +81,20 @@ Prog-WEB-2026/
 │   ├── queries.sql
 │   └── schema.sql
 ├── Handlers/
-│   ├── hurl_test/              -- Tests hurls para verificar endpoints de cada ruta
-│   │   ├── album.hurl
-│   │   ├── artist_song.hurl
-│   │   ├── artist.hurl
-│   │   ├── review.hurl
-│   │   ├── song.hurl
-│   │   └── user.hurl
-│   ├── album.go                -- Handlers de cada entidad
-│   ├── artist_song.go
-│   ├── artists.go
-│   ├── review.go
-│   ├── song.go
-│   └── user.go
+│   └── Handlers.go                 -- Handlers de las entidades: GET general y POST
+├── static/
+│   └── styles.css
+├── views/                          -- Vistas templ 
+│   ├── entity_form.templ
+│   ├
+│   ├── entity_list.templ
+│   ├
+│   ├── index.templ
+│   ├
+│   ├── layout.templ
+│   ├
+│   ├── layout_entities.templ
+│   
 ├── .env
 ├── .gitignore
 ├── docker-compose.yml
@@ -105,4 +106,3 @@ Prog-WEB-2026/
 ├── persistencia.md
 ├── README.md
 ├── sqlc.yaml
-└── tablas_test.go

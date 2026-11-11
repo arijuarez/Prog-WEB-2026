@@ -13,11 +13,18 @@ test-hurl:
 	@echo "Limpiando entorno Docker..."
 	@docker compose down -v
 
-exec:
+exec: copy-env
 	@echo "Eliminando volúmenes y contenedores previos..."
 	@docker compose down
 	@echo "Generando código de base de datos con sqlc..."
 	@sqlc generate
+	@echo "Generando código templ..."
+	@templ generate
 	@echo "Construyendo y levantando contenedores..."
 	@docker compose up -d --build --wait
-	@go run .
+
+run-app: exec
+	@docker compose down -v
+
+copy-env:
+	@[ -f .env ] || cp example.env .env

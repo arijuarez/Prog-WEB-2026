@@ -57,24 +57,17 @@ func main() {
 	defer db.Close()
 	log.Println("Conexión a PostgreSQL establecida correctamente")
 	queries := bd.New(db)
-	/*
-	userH := Handlers.NewUserHandler(queries)
-	// API REST
-	http.HandleFunc("/users", userH.UsersHandler)
 
-	// Frontend: index.html, styles.css y app.js salen de ./static
+	// Archivos estáticos (styles.css, imágenes, js) desde ./static
 	fileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fileServer)
-	// Para que /static/img/... (rutas de tu HTML) también funcione
 	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
-*/
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			handleGET(w, r, queries)
+			Handlers.HandleGET(w, r, queries)
 		case http.MethodPost:
-			handlePOST(w, r, queries)
+			Handlers.HandlePOST(w, r, queries)
 		default:
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}

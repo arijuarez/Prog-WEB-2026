@@ -9,7 +9,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func Layout(titulo string) templ.Component {
+func layout_entities(titulo string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -27,7 +27,7 @@ func Layout(titulo string) templ.Component {
 		ctx = templ.InitializeContext(ctx)
 		templ_7745c5c3_Var1 := templ.GetChildren(ctx)
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>JamBox </title><link rel=\"stylesheet\" href=\"static/styles.css\"><link rel=\"stylesheet\" href=\"static/entidades.css\"></head><body id=\"body\"><header id=\"page-header\"><a class=\"page-logo\" href=\"/\">JamBox</a><nav id=\"page-nav\"><li id=\"nav-songs\"><a href=\"/songs.html\">Canciones</a></li><li id=\"nav-artists\"><a href=\"/artistas.html\">Artistas</a></li><li id=\"nav-albums\"><a href=\"/albums.html\">Álbumes</a></li><li id=\"nav-reviews\"><a href=\"/reviews.html\">Reseñas</a></li><li id=\"nav-members\"><a href=\"/users.html\">Usuarios</a></li></nav></header><main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>JamBox </title><link rel=\"stylesheet\" href=\"static/styles.css\"><link rel=\"stylesheet\" href=\"static/entidades.css\"></head><body id=\"body\"><header id=\"page-header\"><a class=\"page-logo\" href=\"/\">JamBox</a><nav id=\"page-nav\"><li id=\"nav-songs\"><a href=\"/songs\">Canciones</a></li><li id=\"nav-artists\"><a href=\"/artists\">Artistas</a></li><li id=\"nav-albums\"><a href=\"/albums\">Álbumes</a></li><li id=\"nav-reviews\"><a href=\"/reviews\">Reseñas</a></li><li id=\"nav-members\"><a href=\"/users\">Usuarios</a></li></nav></header><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
