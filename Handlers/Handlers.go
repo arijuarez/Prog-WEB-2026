@@ -8,7 +8,7 @@ import (
 	"os"
 
 	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
-	views "github.com/arijuarez/Prog-WEB-2026/tp5/views"
+	views "github.com/arijuarez/Prog-WEB-2026/views"
 )
 
 func handleGET(w http.ResponseWriter, r *http.Request, queries *bd.Queries){

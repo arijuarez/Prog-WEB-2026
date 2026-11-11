@@ -1,10 +1,10 @@
 package views
 
 import (
-    "github.com/arijuarez/Prog-WEB-2026/tp5/bd"
+    "github.com/arijuarez/Prog-WEB-2026/bd"
 )
 
-empl formAlbum() {
+templ formAlbum() {
     <form id="form-entidad">
         <input type="text" name="album_name" placeholder="Título del álbum" required/>
         <input type="number" name="artist_id_artist" placeholder="ID del artista" min="1" required/>
@@ -48,7 +48,7 @@ templ formReview() {
       </form>
 }
 
-temple formUser() {
+templ formUser() {
     <form id="form-entidad">
         <input type="text" name="user_name" placeholder="Nombre de usuario" required/>
         <input type="number" name="amigos" placeholder="ID de foto (opcional)"/>
@@ -57,7 +57,7 @@ temple formUser() {
     </form>
 }
 
-temple formLogin(){
+templ formLogin(){
     <form id="login-form">
       <input id="login-username" type="text" name="username" placeholder="Usuario o email" required>
       <input id="login-password" type="password" name="password" placeholder="Contraseña" required>

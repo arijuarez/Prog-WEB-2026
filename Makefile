@@ -16,6 +16,8 @@ test-hurl:
 exec:
 	@echo "Eliminando volúmenes y contenedores previos..."
 	@docker compose down
+	@echo "Generando código de base de datos con sqlc..."
+	@sqlc generate
 	@echo "Construyendo y levantando contenedores..."
 	@docker compose up -d --build --wait
 	@go run .
