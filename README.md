@@ -1,6 +1,11 @@
 ## Correr tests con:
 **make run-app**
 
+### IMPORTANTE! PARA USAR LA PÁGINA CON SUS POST Y GET:
+Los botones funcionales son las columnas de arriba: artistas, canciones, usuarios, reseñas y álbumes. El resto, por el momento, es sólo ilustrativo, incluidos los botones de login y logout.
+En las columnas declaradas se podrán crear y eliminar entidades.
+No se podrán borrar entidades que estén siendo referenciadas por otra.
+
 ### Forma alternativa para que los datos perduren:
 **make exec**
 Hace que no se borren los datos del docker, manteniendo los datos ingresados al reiniciar la página. Al terminar se probarla se deberá correr: **docker compose down -v** para eliminar todo.
