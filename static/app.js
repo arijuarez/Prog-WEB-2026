@@ -1,14 +1,3 @@
-/* ==========================================================
-   JamBox: main.js
-   Go dibuja las páginas (templates). Este archivo solo:
-     1. abre y cierra los modales
-     2. envía los formularios a los endpoints de Go
-     3. maneja el selector de estrellas
-
-   Endpoints: POST /users (registro), POST /login, POST /logout,
-              POST /reviews
-   ========================================================== */
-
 "use strict";
 
 const $ = (id) => document.getElementById(id);
@@ -34,6 +23,101 @@ function ocultarError(id) {
   $(id).hidden = true;
 }
 
+/* ==========================================================
+   NUEVO: lista de reseñas (GET /reviews) y borrado (DELETE)
+   ========================================================== */
+const lista = $("popular-reviews-list");
+
+// sqlc serializa los campos opcionales como {Int32, Valid}; esto lo tolera
+function valor(x) {
+  if (x && typeof x === "object") return x.Valid === false ? null : x.Int32 ?? x.String ?? null;
+  return x;
+}
+
+function nombreObjetivo(r) {
+  const tipos = [["song", "Canción"], ["album", "Álbum"], ["artist", "Artista"]];
+  for (const [tipo, nombre] of tipos) {
+    const id = valor(r[`${tipo}_id`]);
+    if (id) return `${nombre} #${id}`;
+  }
+  return "Reseña";
+}
+
+// Construye una tarjeta con textContent (nunca innerHTML) para evitar inyección de HTML
+function crearTarjeta(r) {
+  const rating = Number(valor(r.rating)) || 0;
+
+  const card = document.createElement("article");
+  card.className = "review-card";
+  card.dataset.reviewId = r.id;
+
+  const body = document.createElement("div");
+  body.className = "review-body";
+
+  const titulo = document.createElement("h3");
+  titulo.className = "review-target";
+  titulo.textContent = nombreObjetivo(r);
+
+  const autor = document.createElement("div");
+  autor.className = "review-author";
+  const usuario = document.createElement("span");
+  usuario.textContent = `Usuario #${valor(r.user_id)}`;
+  const estrellasTxt = document.createElement("span");
+  estrellasTxt.className = "stars";
+  estrellasTxt.textContent = "★".repeat(rating) + "☆".repeat(5 - rating);
+  autor.append(usuario, estrellasTxt);
+
+  const texto = document.createElement("p");
+  texto.className = "review-text";
+  texto.textContent = valor(r.content) || "";
+
+  const acciones = document.createElement("div");
+  acciones.className = "review-actions";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn-delete";
+  btn.textContent = "Eliminar";
+  acciones.appendChild(btn);
+
+  body.append(titulo, autor, texto, acciones);
+  card.appendChild(body);
+  return card;
+}
+
+async function cargarReviews() {
+  try {
+    const res = await fetch("/reviews");
+    if (!res.ok) throw new Error(res.status);
+    const reviews = (await res.json()) || []; // Go devuelve null si el slice está vacío
+
+    lista.replaceChildren(); // vacía el contenedor
+    if (reviews.length === 0) {
+      const vacio = document.createElement("p");
+      vacio.textContent = "Todavía no hay reseñas.";
+      lista.appendChild(vacio);
+      return;
+    }
+    reviews.forEach((r) => lista.appendChild(crearTarjeta(r)));
+  } catch (_) {
+    lista.textContent = "No se pudieron cargar las reseñas.";
+  }
+}
+
+// Delegación de eventos: UN listener en el contenedor para todos los botones
+lista.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".btn-delete");
+  if (!btn) return;
+
+  const id = btn.closest(".review-card").dataset.reviewId;
+  try {
+    const res = await fetch(`/reviews/${id}`, { method: "DELETE" });
+    if (res.ok) cargarReviews();
+    else alert("No se pudo eliminar la reseña.");
+  } catch (_) {
+    alert("No se pudo conectar con el servidor.");
+  }
+});
+
 /* ---------- Modales ---------- */
 const overlay = $("modal-overlay");
 const modales = [$("modal-login"), $("modal-signup"), $("modal-review")];
@@ -51,7 +135,6 @@ function cerrarModales() {
   document.body.style.overflow = "";
 }
 
-// Los botones de login y registro solo existen si no hay sesión
 const abrirLogin = () => abrirModal($("modal-login"));
 const abrirRegistro = () => abrirModal($("modal-signup"));
 
@@ -93,23 +176,24 @@ $("signup-form").addEventListener("submit", async (e) => {
         status === 409 ? "Ese usuario o email ya está registrado." : "No se pudo crear la cuenta."
       );
     }
-    location.reload(); // Go vuelve a dibujar la página con la sesión iniciada
+    $("signup-form").reset();
+    cerrarModales();
   } catch (_) {
     mostrarError("signup-error", "No se pudo conectar con el servidor.");
   }
 });
 
-/* ---------- Login: POST /login ---------- */
+/* ---------- Login / menú / logout ----------
+   Siguen igual, pero tu API todavía no tiene /login ni /logout.
+   No los pide la consigna; sin esos endpoints mostrarán error. */
 $("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   ocultarError("login-error");
-
   try {
     const { ok } = await enviar("/login", {
       username: $("login-username").value.trim(),
       password: $("login-password").value,
     });
-
     if (!ok) return mostrarError("login-error", "Usuario o contraseña incorrectos.");
     location.reload();
   } catch (_) {
@@ -117,17 +201,14 @@ $("login-form").addEventListener("submit", async (e) => {
   }
 });
 
-/* ---------- Menú de usuario y logout: POST /logout ---------- */
 if ($("user-menu-toggle")) {
   $("user-menu-toggle").addEventListener("click", (e) => {
     e.stopPropagation();
     $("user-menu").hidden = !$("user-menu").hidden;
   });
-
   document.addEventListener("click", (e) => {
     if (!$("auth-user").contains(e.target)) $("user-menu").hidden = true;
   });
-
   $("btn-logout").addEventListener("click", async () => {
     await enviar("/logout");
     location.reload();
@@ -135,14 +216,10 @@ if ($("user-menu-toggle")) {
 }
 
 /* ---------- Nueva reseña: POST /reviews ---------- */
-// Go imprime el id del usuario en <body data-user-id="...">; vacío = sin sesión
-const userId = document.body.dataset.userId;
+// Ya no hay sesión desde templates: el botón abre siempre el modal de reseña
+$("btn-new-review").addEventListener("click", () => abrirModal($("modal-review")));
 
-$("btn-new-review").addEventListener("click", () => {
-  abrirModal(userId ? $("modal-review") : $("modal-login"));
-});
-
-// Estrellas
+// Estrellas (sin cambios)
 const estrellas = Array.from($("review-rating").querySelectorAll("button"));
 const valorPuntaje = $("review-rating-value");
 
@@ -160,31 +237,32 @@ estrellas.forEach((s) => {
 
 $("review-rating").addEventListener("mouseleave", () => pintarEstrellas(Number(valorPuntaje.value)));
 
-// El campo de búsqueda usa un <datalist> que dibuja Go con las opciones
-function buscarObjetivo(texto) {
-  return Array.from($("review-options").options).find((o) => o.value === texto);
-}
-
 $("review-form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const opcion = buscarObjetivo($("review-search").value);
-  if (!opcion) return alert("Elegí una canción, álbum o artista de la lista.");
   if (Number(valorPuntaje.value) === 0) return alert("Elegí una calificación de 1 a 5 estrellas.");
 
-  // data-type es "song", "album" o "artist" -> song_id, album_id, artist_id
   try {
     const { ok } = await enviar("/reviews", {
-      user_id: Number(userId),
-      [`${opcion.dataset.type}_id`]: Number(opcion.dataset.id),
+      user_id: Number($("review-user-id").value),
+      [`${$("review-type").value}_id`]: Number($("review-target-id").value), // song_id, album_id o artist_id
       rating: Number(valorPuntaje.value),
       content: $("review-content").value.trim(),
       spoiler: $("review-spoiler").checked,
     });
 
     if (!ok) return alert("No se pudo publicar la reseña. Probá de nuevo.");
-    location.reload();
+
+    // Consigna: tras crear, volver a pedir la lista y refrescar la vista
+    $("review-form").reset();
+    valorPuntaje.value = 0;
+    pintarEstrellas(0);
+    cerrarModales();
+    cargarReviews();
   } catch (_) {
     alert("No se pudo conectar con el servidor.");
   }
 });
+
+// Al cargar la página
+cargarReviews();

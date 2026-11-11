@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Artistas — JamBox</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="page-entidad" data-endpoint="/artists">
+
+  <header class="page-header">
+    <a class="page-logo" href="/">JamBox</a>
+    <nav class="page-nav">
+      <a href="/artistas.html" aria-current="page">Artistas</a>
+      <a href="/albums.html">Álbumes</a>
+      <a href="/songs.html">Canciones</a>
+      <a href="/reviews.html">Reseñas</a>
+      <a href="/users.html">Usuarios</a>
+    </nav>
+  </header>
+
+  <section class="entity-hero">
+    <div class="entity-hero-inner">
+      <span class="entity-hero-label">Explorar</span>
+      <h1>Artistas</h1>
+      <p class="entity-hero-desc">Agregá y gestioná los artistas de la plataforma.</p>
+    </div>
+  </section>
+
+  <div class="entity-body">
+
+    <aside class="entity-form-panel">
+      <h2>+ Nuevo artista</h2>
+      <form id="form-entidad">
+        <input type="text"   name="artist_name" placeholder="Nombre del artista" required>
+        <input type="text"   name="artist_bio"  placeholder="Descripción (opcional)">
+        <input type="number" name="photo"        placeholder="ID de foto (opcional)">
+        <button type="submit">Crear artista</button>
+      </form>
+    </aside>
+
+    <section class="entity-list-panel">
+      <div class="entity-list-header">
+        <h2>Todos los artistas</h2>
+        <span class="entity-count" id="lista-count"></span>
+      </div>
+      <ul id="lista"></ul>
+    </section>
+
+  </div>
+
+  <footer id="site-footer">
+    <div id="footer-container">
+      <nav id="footer-nav">
+        <a href="/artistas.html">Artistas</a>
+        <a href="/albums.html">Álbumes</a>
+        <a href="/songs.html">Canciones</a>
+        <a href="/reviews.html">Reseñas</a>
+        <a href="/users.html">Usuarios</a>
+      </nav>
+      <p id="footer-copy">© 2026 JamBox.</p>
+    </div>
+  </footer>
+
+  <script src="/entidades.js"></script>
+</body>
+</html>

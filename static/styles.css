@@ -21,15 +21,30 @@
 
 [hidden] { display: none !important; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; 
+  height: 100%;}
 
 body {
+  min-height: 100dvh;          /* alto completo de la ventana */
+  display: flex;
+  flex-direction: column;
   margin: 0;
   background: var(--crema);
   color: var(--ciruela);
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1.55;
+}
+
+/* El contenido principal absorbe el espacio sobrante */
+.entity-body {
+  flex: 1 0 auto;
+}
+
+/* El footer queda siempre pegado abajo */
+footer {
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 h1, h2, h3 {
@@ -490,6 +505,15 @@ button {
   font-size: 0.92rem;
 }
 
+.modal select option { color: var(--ciruela); }
+
+.btn-delete {
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+  border-color: var(--malva);
+}
+.btn-delete:hover { background: #8b1e1e; color: var(--crema); border-color: #8b1e1e; }
+
 /* ============ LLAMADO FINAL ============ */
 #bottom-cta {
   text-align: center;
@@ -545,6 +569,8 @@ button {
 .modal input[type="text"],
 .modal input[type="email"],
 .modal input[type="password"],
+.modal input[type="number"],
+.modal select,
 .modal textarea {
   width: 100%;
   padding: 0.65rem 0.8rem;
@@ -628,3 +654,395 @@ button {
   html { scroll-behavior: auto; }
   * { transition: none !important; }
 }
+
+/* ============ PÁGINAS DE ENTIDADES · estilo Apple ============
+   Usa las variables existentes: --ciruela, --crema, --menta, --salvia,
+   --malva, --container, --font-title. Los radios y sombras de este
+   archivo son propios para no depender de --radius / --radius-sm. */
+
+:root {
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+
+  --header-h: 60px;
+
+  /* Líneas y superficies derivadas de la paleta */
+  --hairline: color-mix(in srgb, var(--malva) 35%, transparent);
+  --hairline-strong: color-mix(in srgb, var(--malva) 60%, transparent);
+  --glass-dark: color-mix(in srgb, var(--ciruela) 78%, transparent);
+
+  /* Sombras suaves en dos capas, a la manera de Apple */
+  --shadow-sm: 0 1px 2px rgba(62, 25, 41, .06), 0 2px 8px rgba(62, 25, 41, .05);
+  --shadow-md: 0 2px 4px rgba(62, 25, 41, .06), 0 12px 32px rgba(62, 25, 41, .12);
+  --shadow-lg: 0 4px 8px rgba(62, 25, 41, .08), 0 24px 56px rgba(62, 25, 41, .22);
+
+  --ease: cubic-bezier(.32, .72, 0, 1);
+}
+
+/* — Header (vidrio esmerilado) — */
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  min-height: var(--header-h);
+  padding: 0.5rem max(1rem, calc((100% - var(--container)) / 2));
+  background: var(--glass-dark);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  color: var(--crema);
+  border-bottom: 1px solid rgba(237, 227, 228, .08);
+}
+
+.page-logo {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: -0.03em;
+  color: var(--menta);
+  transition: opacity .2s var(--ease);
+}
+.page-logo:hover { opacity: .8; text-decoration: none; }
+
+.page-nav {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+.page-nav a {
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--r-pill);
+  color: var(--malva);
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background-color .2s var(--ease), color .2s var(--ease);
+}
+.page-nav a:hover {
+  color: var(--crema);
+  background: rgba(237, 227, 228, .08);
+  text-decoration: none;
+}
+.page-nav a[aria-current="page"] {
+  color: var(--crema);
+  background: rgba(237, 227, 228, .14);
+}
+
+/* — Banner de página — */
+.entity-hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 4.5rem 0 4rem;
+  background:
+    radial-gradient(120% 140% at 85% 0%,
+      color-mix(in srgb, var(--ciruela) 82%, var(--menta)) 0%,
+      var(--ciruela) 60%);
+  color: var(--crema);
+}
+
+/* disco decorativo: más tenue y desenfocado en los bordes */
+.entity-hero::before {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  right: -90px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, var(--menta) 0 11%, var(--ciruela) 11% 13%, transparent 13%),
+    repeating-radial-gradient(circle at center, rgba(175, 159, 165, .18) 0 1px, transparent 1px 9px),
+    radial-gradient(circle at center, #2a1020 0 100%);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .35);
+  opacity: .45;
+  pointer-events: none;
+}
+
+.entity-hero-inner {
+  position: relative;
+  width: min(var(--container), 100% - 2rem);
+  margin-inline: auto;
+  text-align: left;
+}
+
+.entity-hero-label {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--menta);
+}
+
+.entity-hero h1 {
+  margin-bottom: 0.75rem;
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--crema);
+  text-wrap: balance;
+}
+
+.entity-hero-desc {
+  max-width: 46ch;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--malva);
+}
+
+/* — Contenedor principal — */
+.entity-body {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+  width: min(var(--container), 100% - 2rem);
+  margin: 3rem auto 5rem;
+}
+
+/* — Panel del formulario — */
+.entity-form-panel {
+  position: sticky;
+  top: calc(var(--header-h) + 1.25rem);
+  padding: 1.75rem;
+  background: var(--ciruela);
+  color: var(--crema);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.entity-form-panel h2 {
+  margin-bottom: 1.25rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--crema);
+}
+
+.entity-form-panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.entity-form-panel input[type="text"],
+.entity-form-panel input[type="email"],
+.entity-form-panel input[type="number"],
+.entity-form-panel input[type="date"],
+.entity-form-panel textarea,
+.entity-form-panel select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font: inherit;
+  font-size: 0.98rem;
+  color: var(--crema);
+  background: rgba(237, 227, 228, .08);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  transition: background-color .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+
+.entity-form-panel input::placeholder,
+.entity-form-panel textarea::placeholder { color: var(--malva); opacity: .85; }
+
+.entity-form-panel input:hover,
+.entity-form-panel textarea:hover,
+.entity-form-panel select:hover { background: rgba(237, 227, 228, .12); }
+
+.entity-form-panel input:focus,
+.entity-form-panel textarea:focus,
+.entity-form-panel select:focus {
+  outline: none;
+  background: rgba(237, 227, 228, .12);
+  border-color: var(--menta);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--menta) 28%, transparent);
+}
+
+.entity-form-panel textarea { resize: vertical; min-height: 5.5rem; }
+
+.entity-form-panel button[type="submit"] {
+  margin-top: 0.5rem;
+  padding: 0.8rem 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ciruela);
+  background: var(--menta);
+  border: 0;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: background-color .2s var(--ease), transform .15s var(--ease);
+}
+.entity-form-panel button[type="submit"]:hover { background: var(--salvia); }
+.entity-form-panel button[type="submit"]:active { transform: scale(.98); }
+
+/* — Panel de la lista — */
+.entity-list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0 0.25rem 0.9rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.entity-list-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.entity-count {
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ciruela);
+  background: color-mix(in srgb, var(--malva) 22%, transparent);
+  border-radius: var(--r-pill);
+}
+
+#lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* — Ítem de la lista — */
+.item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: #fff;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.item:hover {
+  border-color: var(--hairline-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.item-index {
+  flex-shrink: 0;
+  min-width: 1.75rem;
+  font-family: var(--font-title);
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--malva);
+  user-select: none;
+}
+
+.item-datos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.item-datos .item-name {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ciruela);
+}
+
+.item-datos span {
+  display: flex;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--ciruela) 72%, transparent);
+}
+
+.item-datos span strong {
+  font-weight: 600;
+  color: var(--ciruela);
+}
+
+.btn-delete {
+  flex-shrink: 0;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #8b1e1e;
+  background: rgba(139, 30, 30, .08);
+  border: 0;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: background-color .2s var(--ease), color .2s var(--ease), transform .15s var(--ease);
+}
+.btn-delete:hover {
+  background: #8b1e1e;
+  color: var(--crema);
+}
+.btn-delete:active { transform: scale(.96); }
+
+/* — Foco visible para teclado — */
+.page-nav a:focus-visible,
+.page-logo:focus-visible,
+.btn-delete:focus-visible,
+.entity-form-panel button[type="submit"]:focus-visible {
+  outline: 3px solid var(--menta);
+  outline-offset: 2px;
+}
+
+/* — Responsive — */
+@media (max-width: 860px) {
+  .entity-body { grid-template-columns: 1fr; gap: 2rem; }
+  .entity-form-panel { position: static; }
+  .entity-hero::before { opacity: .22; right: -160px; }
+}
+
+@media (max-width: 540px) {
+  .entity-hero { padding: 3rem 0 2.5rem; }
+  .entity-form-panel { padding: 1.4rem; }
+  .item { flex-wrap: wrap; }
+  .page-nav { margin-left: 0; }
+}
+
+/* — Respeta preferencia de movimiento reducido — */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ——— compatibilidad con .layout/.panel existentes (index.html no los usa) ——— */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, 2fr);
+  gap: 2rem;
+  align-items: start;
+  width: min(var(--container), 100% - 2rem);
+  margin: 0 auto 3rem;
+}
+.panel {
+  padding: 1.5rem;
+  background: #fff;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+.panel h2 {
+  margin-bottom: 1rem;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }

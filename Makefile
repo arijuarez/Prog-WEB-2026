@@ -15,7 +15,7 @@ test-hurl:
 
 exec:
 	@echo "Eliminando volúmenes y contenedores previos..."
-	@docker compose down -v
+	@docker compose down
 	@echo "Construyendo y levantando contenedores..."
 	@docker compose up -d --build --wait
 	@go run .

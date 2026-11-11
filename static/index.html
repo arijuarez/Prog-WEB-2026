@@ -15,11 +15,11 @@
 
       <nav id="main-nav">
         <ul id="nav-list">
-          <li id="nav-songs"><a href="/canciones">Canciones</a></li>
-          <li id="nav-albums"><a href="/albumes">Álbumes</a></li>
-          <li id="nav-artists"><a href="/artistas">Artistas</a></li>
-          <li id="nav-lists"><a href="/listas">Listas</a></li>
-          <li id="nav-members"><a href="/miembros">Miembros</a></li>
+          <li id="nav-songs"><a href="/songs.html">Canciones</a></li>
+          <li id="nav-artists"><a href="/artistas.html">Artistas</a></li>
+          <li id="nav-albums"><a href="/albums.html">Álbumes</a></li>
+          <li id="nav-reviews"><a href="/reviews.html">Reseñas</a></li>
+          <li id="nav-members"><a href="/users.html">Usuarios</a></li>
         </ul>
       </nav>
 
@@ -158,24 +158,6 @@
           <h2 id="popular-reviews-title">Reseñas populares</h2>
           <a id="popular-reviews-more" href="/resenas">Más reseñas</a>
         </div>
-        <div id="popular-reviews-list">
-          <article id="review-card-1" class="review-card" data-review-id="1">
-            <img id="review-cover-1" class="review-cover" src="/static/img/placeholder-cover.png" alt="Portada">
-            <div id="review-body-1" class="review-body">
-              <h3 id="review-target-1" class="review-target">Nombre del álbum <span id="review-year-1">2026</span></h3>
-              <div id="review-author-1" class="review-author">
-                <img id="review-author-avatar-1" src="/static/img/avatar-default.png" alt="">
-                <a id="review-author-name-1" href="/usuario/1">usuario</a>
-                <span id="review-stars-1" class="stars">★★★★☆</span>
-              </div>
-              <p id="review-text-1" class="review-text">Texto de la reseña...</p>
-              <div id="review-actions-1" class="review-actions">
-                <button id="review-like-1" type="button" class="btn-like">♥ <span id="review-likes-1">0</span></button>
-                <button id="review-comment-1" type="button" class="btn-comment">Comentar <span id="review-comments-1">0</span></button>
-              </div>
-            </div>
-          </article>
-        </div>
       </section>
 
       <aside id="sidebar">
@@ -240,6 +222,13 @@
       <button id="modal-review-close" class="modal-close" type="button">×</button>
       <h2 id="modal-review-title">Nueva reseña</h2>
       <form id="review-form">
+        <input id="review-user-id" type="number" min="1" name="user_id" placeholder="Tu ID de usuario" required>
+      <select id="review-type" name="type" required>
+        <option value="song">Canción</option>
+        <option value="album">Álbum</option>
+        <option value="artist">Artista</option>
+      </select>
+<input id="review-target-id" type="number" min="1" name="target_id" placeholder="ID de la canción, álbum o artista" required>
         <input id="review-search" type="text" name="target" placeholder="Buscá una canción, álbum o artista" required>
         <div id="review-rating" class="rating-input">
           <button id="star-1" type="button" data-value="1">★</button>
@@ -272,5 +261,6 @@
   </footer>
 
   <script src="./app.js"></script>
+  <script src="/entidades.js"></script>
 </body>
 </html>

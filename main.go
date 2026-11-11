@@ -1,40 +1,35 @@
 package main
 
 import (
-	"os"
 	"database/sql"
-	//"log"
-	"net/http"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
 
-	//Handlers "github.com/arijuarez/Prog-WEB-2026/Handlers"
-	//bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
+	Handlers "github.com/arijuarez/Prog-WEB-2026/Handlers"
+	bd "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 
-	_ "github.com/lib/pq" //importar drivers
+	_ "github.com/lib/pq" // importar drivers
 )
 
 func abrirDB() (*sql.DB, error) {
-	// Lee las variables de entorno o usa los valores por defecto (para ejecución fuera de Docker)
 	dbHost := os.Getenv("DB_HOST")
 	if dbHost == "" {
 		dbHost = "localhost"
 	}
-
 	dbPort := os.Getenv("DB_PORT")
 	if dbPort == "" {
 		dbPort = "5431"
 	}
-
 	dbUser := os.Getenv("DB_USER")
 	if dbUser == "" {
 		dbUser = "postgres"
 	}
-
 	dbPassword := os.Getenv("DB_PASSWORD")
 	if dbPassword == "" {
 		dbPassword = "1234"
 	}
-
 	dbName := os.Getenv("DB_NAME")
 	if dbName == "" {
 		dbName = "postgres"
@@ -47,24 +42,20 @@ func abrirDB() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
-
 	db.SetMaxOpenConns(25)
 	return db, nil
 }
 
 func main() {
-	static := "./static"
-	/*db, err := abrirDB()
+	db, err := abrirDB()
 	if err != nil {
 		log.Fatalf("Error al conectar con base de datos %v\n", err)
 	}
 	defer db.Close()
 	log.Println("Conexión a PostgreSQL establecida correctamente")
-	
 	queries := bd.New(db)
 
 	userH := Handlers.NewUserHandler(queries)
@@ -74,32 +65,26 @@ func main() {
 	reviewH := Handlers.NewReviewHandler(queries)
 	artistSongH := Handlers.NewArtistSongHandler(queries)
 
+	// API REST
 	http.HandleFunc("/users", userH.UsersHandler)
 	http.HandleFunc("/users/", userH.UserHandler)
-
 	http.HandleFunc("/artists", artistH.ArtistsHandler)
 	http.HandleFunc("/artists/", artistH.ArtistHandler)
-
 	http.HandleFunc("/songs", songH.SongsHandler)
 	http.HandleFunc("/songs/", songH.SongHandler)
-
 	http.HandleFunc("/albums", albumH.AlbumsHandler)
 	http.HandleFunc("/albums/", albumH.AlbumHandler)
-
 	http.HandleFunc("/reviews", reviewH.ReviewsHandler)
 	http.HandleFunc("/reviews/", reviewH.ReviewHandler)
-
 	http.HandleFunc("/artist-songs", artistSongH.ArtistSongsHandler)
 	http.HandleFunc("/artist-songs/", artistSongH.ArtistSongHandler)
 
+	// Frontend: index.html, styles.css y app.js salen de ./static
+	fileServer := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fileServer)
+	// Para que /static/img/... (rutas de tu HTML) también funcione
+	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
+
 	log.Println("Server starting on :8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
-	*/
-	fileServer := http.FileServer(http.Dir(static))
-	http.Handle("/", fileServer)
-	port:= ":8080"
-	err := http.ListenAndServe(port,nil)
-	if err != nil {
-		fmt.Printf("Error al iniciar el servidor: %v\n", err)
-	}
 }
