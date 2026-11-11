@@ -1,4 +1,12 @@
+# Archivos de entorno local
 .env
-bd/sqlc
 
-views/*templ.go
+# Directorios de código generado
+bd/sqlc/
+
+# Archivos Go generados por Templ (en views o cualquier subcarpeta)
+*_templ.go
+
+# Binarios de Go y ejecutables
+app
+*.exe
