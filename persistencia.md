@@ -70,39 +70,40 @@ RESUMEN DE RELACIONES:
 ## 2. Estructura de Directorio
 DataModelerSQL.png
 
-TPE/
-├── bd/
-│   ├── sqlc/                       -- Código autogenerado por sqlc (no editar)
-│   │   ├── db.go
-│   │   ├── models.go
-│   │   └── queries.sql.go
-│   ├── DataModelerSQL.png
-│   ├── persistencia.md
-│   ├── queries.sql
-│   └── schema.sql
-├── Handlers/
-│   └── Handlers.go                 -- Handlers de las entidades: GET general y POST
-├── static/
-│   └── styles.css
-├── views/                          -- Vistas templ 
-│   ├── entity_form.templ
-│   ├
-│   ├── entity_list.templ
-│   ├
-│   ├── index.templ
-│   ├
-│   ├── layout.templ
-│   ├
-│   ├── layout_entities.templ
-│   
-├── .env
-├── .gitignore
-├── docker-compose.yml
-├── Dockerfile
-├── go.mod
-├── go.sum
-├── main.go
-├── Makefile
-├── persistencia.md
-├── README.md
-├── sqlc.yaml
+TPE/  
+├── bd/  
+│   ├── sqlc/                       -- Código autogenerado por sqlc (no editar)  
+│   │   ├── db.go  
+│   │   ├── models.go  
+│   │   └── queries.sql.go  
+│   ├── DataModelerSQL.png  
+│   ├── persistencia.md  
+│   ├── queries.sql  
+│   └── schema.sql  
+├── Handlers/  
+│   └── Handlers.go                 -- Handlers de las entidades: GET general y POST  
+├── static/  
+│   └── styles.css  
+├── views/                          -- Vistas templ   
+│   ├── entity_form.templ  
+│   ├  
+│   ├── entity_list.templ  
+│   ├  
+│   ├── index.templ  
+│   ├  
+│   ├── layout.templ  
+│   ├  
+│   ├── layout_entities.templ  
+│     
+├── .env  
+├── .gitignore  
+├── docker-compose.yml  
+├── Dockerfile  
+├── go.mod  
+├── go.sum  
+├── main.go  
+├── Makefile        
+├── persistencia.md   
+├── README.md   
+├── sqlc.yaml   
+  
