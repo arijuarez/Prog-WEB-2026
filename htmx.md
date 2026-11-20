@@ -17,7 +17,7 @@ Se agregó el script de HTMX en el `<head>` de los dos layouts:
 <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0/dist/htmx.min.js"></script>
 ```
 
-Se usa **HTMX 4.0** (la versión vista en la teoría), no la 1.9.10 del enunciado. La línea `htmx-config` se explica en la sección 5.
+Se usa **HTMX 4.0** . La línea `htmx-config` se explica en la sección 5.
 
 ---
 
@@ -37,7 +37,7 @@ Cada lista se envuelve en un `<section>` con un `id` único, que es el destino d
 | Reseñas  | `ReviewList`  | `#review-list`      |
 | Artistas | `ArtistsList` | `#artist-list`      |
 
-Los componentes se renombraron con **mayúscula inicial** (antes `userList`, etc.) para que sean **exportados** y el paquete `Handlers` pueda renderizarlos. En Go, un nombre en minúscula es privado del paquete.
+Los componentes se renombraron con **mayúscula inicial** (antes `userList`, etc.) para que sean **exportados** y el paquete `Handlers` pueda renderizarlos. 
 
 ### 2.2 Formularios con atributos HTMX
 
@@ -72,7 +72,7 @@ views.FormUser(true).Render(ctx, w) // form vacío (OOB) → limpia el formulari
 
 ### 2.4 Limpieza del formulario (Out-of-Band swap)
 
-Sin esto, después de crear una entidad los campos seguían con los datos cargados. Se resolvió con la técnica **OOB** del ejercicio 3:
+Sin esto, después de crear una entidad los campos seguían con los datos cargados. Se resolvió con la técnica **OOB** del ejercicio 3 del práctico 6:
 
 - Los formularios se exportaron (`FormUser`, `FormSong`, ...) y reciben un parámetro `oob bool`:
 
@@ -111,7 +111,7 @@ El `<form method="POST" action="/users/{id}/delete">` de cada elemento se reempl
 ```
 
 - `hx-delete`: envía una petición HTTP `DELETE` a `/<entidades>/{id}`.
-- `hx-target="closest li"`: el enunciado usa `closest tr` porque lista en una tabla; acá cada entidad está en un `<li>`.
+- `hx-target="closest li"`: Usamos 'closest li' porque cada entidad está adentro de un `<li>`.
 - `hx-swap="outerHTML"`: el `<li>` se reemplaza por la respuesta. Como la respuesta no trae contenido para el target, el `<li>` desaparece.
 - `hx-confirm`: pide confirmación antes de enviar.
 
@@ -159,11 +159,10 @@ HTMX extrae el `<span>` OOB y actualiza el número. Lo que queda para el `<li>` 
 2. Entrar a `/users`, `/songs`, `/albums`, `/reviews` o `/artists`.
 3. **Crear:** completar el formulario y enviarlo. La lista se actualiza, el contador sube y el formulario queda vacío, sin recargar la página.
 4. **Borrar:** apretar "Eliminar" y confirmar. El elemento desaparece y el contador baja.
-5. En DevTools → Network se ven las peticiones `POST` y `DELETE`, y la respuesta es solo el fragmento HTML, no la página completa.
 
 ---
 
-## 5. Correcciones adicionales
+## 5. Correcciones adicionales para la transición
 
 ### 5.1 Errores del servidor que rompían la página
 
@@ -174,23 +173,3 @@ Solución, en los dos layouts:
 - `<meta name="htmx-config" content='{"noSwap":[204,304,"4xx","5xx"]}'>`: las respuestas de error **no** se insertan, como en HTMX 2.
 - `hx-on:htmx:response:error="alert(...)"` en el `<body>`: ante cualquier error de una petición HTMX se muestra un aviso al usuario. El evento sube (*bubbling*) desde el formulario o botón hasta el `<body>`.
 
-### 5.2 Otras
-
-- **Mensajes de error copiados:** en el POST de canciones, álbumes, reseñas y artistas, el error de listado decía "Error al obtener usuarios".
-- **Errores internos expuestos:** varias respuestas incluían el mensaje crudo de PostgreSQL. Se agregó `errorServidor`, que registra el error real con `log.Printf` y responde un mensaje genérico.
-- **CSS inexistente:** `layout_entities.templ` cargaba `static/entidades.css`, que no existe (daba 404). Se quitó el enlace.
-- **Rutas relativas:** `href="static/styles.css"` pasó a `href="/static/styles.css"` para que funcione desde cualquier ruta.
-- **Fechas:** la fecha de las reseñas y de lanzamiento de los álbumes se mostraba como `2026-11-20 00:00:00 +0000 UTC`. Ahora se muestra como `20/11/2026` (`.Format("02/01/2006")`).
-
----
-
-## Resumen de archivos modificados
-
-| Archivo | Cambio |
-|---|---|
-| `views/layout.templ`, `views/layout_entities.templ` | Script de HTMX, `htmx-config`, aviso de errores, rutas de CSS |
-| `views/entity_form.templ` | `hx-post`/`hx-target`/`hx-swap`, formularios exportados con versión OOB |
-| `views/entity_list.templ` | `id` en las listas, componentes exportados, botón `hx-delete`, `ListCount`, formato de fechas |
-| `views/index.templ` | Llamadas a los componentes renombrados |
-| `main.go` | Ruta para el método `DELETE` |
-| `Handlers/Handlers.go` | POST sin redirección (lista + form OOB), `HandleDELETE` (200 + contador OOB), `errorServidor`, mensajes corregidos |

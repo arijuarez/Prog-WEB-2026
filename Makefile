@@ -13,7 +13,7 @@ test-hurl:
 	@echo "Limpiando entorno Docker..."
 	@docker compose down -v
 
-exec: copy-env
+run-app: copy-env
 	@echo "Eliminando volúmenes y contenedores previos..."
 	@docker compose down
 	@echo "Generando código de base de datos con sqlc..."
@@ -23,7 +23,7 @@ exec: copy-env
 	@echo "Construyendo y levantando contenedores..."
 	@docker compose up -d --build --wait
 
-run-app: exec
+delete:
 	@docker compose down -v
 
 copy-env:

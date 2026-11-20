@@ -50,55 +50,86 @@ func badRequest(w http.ResponseWriter, msg string) {
 
 // --------- GET ---------
 
+// HandleGET elige, según la ruta, qué página renderizar.
 func HandleGET(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
-	ctx := r.Context()
 	switch r.URL.Path {
 	case "/":
-		views.IndexMain().Render(ctx, w)
+		views.IndexMain().Render(r.Context(), w)
 	case "/users":
-		list, err := queries.ListUsers(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener usuarios", err, http.StatusInternalServerError)
-			return
-		}
-		views.IndexUsers(list).Render(ctx, w)
+		getUsers(w, r, queries)
 	case "/songs":
-		list, err := queries.ListSongs(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener canciones", err, http.StatusInternalServerError)
-			return
-		}
-		views.IndexSongs(list).Render(ctx, w)
+		getSongs(w, r, queries)
 	case "/albums":
-		list, err := queries.ListAlbums(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener álbumes", err, http.StatusInternalServerError)
-			return
-		}
-		views.IndexAlbums(list).Render(ctx, w)
+		getAlbums(w, r, queries)
 	case "/reviews":
-		list, err := queries.ListReviews(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener reseñas", err, http.StatusInternalServerError)
-			return
-		}
-		views.IndexReviews(list).Render(ctx, w)
+		getReviews(w, r, queries)
 	case "/artists":
-		list, err := queries.ListArtists(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener artistas", err, http.StatusInternalServerError)
-			return
-		}
-		views.IndexArtists(list).Render(ctx, w)
+		getArtists(w, r, queries)
 	default:
 		http.NotFound(w, r)
 	}
 }
 
+// getUsers atiende GET /users: página completa con la lista de usuarios.
+func getUsers(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	list, err := queries.ListUsers(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener usuarios", err, http.StatusInternalServerError)
+		return
+	}
+	views.IndexUsers(list).Render(ctx, w)
+}
+
+// getSongs atiende GET /songs: página completa con la lista de canciones.
+func getSongs(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	list, err := queries.ListSongs(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener canciones", err, http.StatusInternalServerError)
+		return
+	}
+	views.IndexSongs(list).Render(ctx, w)
+}
+
+// getAlbums atiende GET /albums: página completa con la lista de álbumes.
+func getAlbums(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	list, err := queries.ListAlbums(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener álbumes", err, http.StatusInternalServerError)
+		return
+	}
+	views.IndexAlbums(list).Render(ctx, w)
+}
+
+// getReviews atiende GET /reviews: página completa con la lista de reseñas.
+func getReviews(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	list, err := queries.ListReviews(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener reseñas", err, http.StatusInternalServerError)
+		return
+	}
+	views.IndexReviews(list).Render(ctx, w)
+}
+
+// getArtists atiende GET /artists: página completa con la lista de artistas.
+func getArtists(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	list, err := queries.ListArtists(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener artistas", err, http.StatusInternalServerError)
+		return
+	}
+	views.IndexArtists(list).Render(ctx, w)
+}
+
 // --------- POST ---------
 
+// HandlePOST parsea el formulario y elige, según la ruta, qué entidad crear.
+// Cada handler responde solo con la lista actualizada y el formulario vacío (OOB).
 func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
-	ctx := r.Context()
 	if err := r.ParseForm(); err != nil {
 		badRequest(w, "Error al parsear el formulario")
 		return
@@ -106,202 +137,227 @@ func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 
 	switch r.URL.Path {
 	case "/users":
-		userName := strings.TrimSpace(r.FormValue("user_name"))
-		if userName == "" {
-			badRequest(w, "El nombre de usuario es obligatorio")
-			return
-		}
-		amigos, err := intOpcional(r.FormValue("amigos"))
-		if err != nil || amigos < 0 {
-			badRequest(w, "Cantidad de amigos inválida")
-			return
-		}
-		photo, err := intOpcional(r.FormValue("user_ph"))
-		if err != nil || photo < 0 {
-			badRequest(w, "Valor de foto inválido")
-			return
-		}
-		_, err = queries.CreateUser(ctx, bd.CreateUserParams{UserName: userName, Amigos: amigos, Photo: photo})
-		if err != nil {
-			http.Error(w, "Error al crear el usuario", http.StatusInternalServerError)
-			return
-		}
-		list, err := queries.ListUsers(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener usuarios", err, http.StatusInternalServerError)
-			return
-		}
-		views.UserList(list).Render(ctx, w)
-		views.FormUser(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
-
+		postUsers(w, r, queries)
 	case "/songs":
-		songName := strings.TrimSpace(r.FormValue("song_name"))
-		if songName == "" {
-			badRequest(w, "El título es obligatorio")
-			return
-		}
-		albumID, err := intRequerido(r.FormValue("album_id_album"))
-		if err != nil || albumID < 1 {
-			badRequest(w, "ID de álbum inválido")
-			return
-		}
-		dur, err := intOpcional(r.FormValue("song_dur"))
-		if err != nil || dur < 0 {
-			badRequest(w, "Duración inválida")
-			return
-		}
-		likes, err := intOpcional(r.FormValue("likes"))
-		if err != nil || likes < 0 {
-			badRequest(w, "Likes inválidos")
-			return
-		}
-		_, err = queries.CreateSong(ctx, bd.CreateSongParams{
-			SongName: songName, SongDur: dur, AlbumIDAlbum: albumID, Likes: likes,
-		})
-		if err != nil {
-			http.Error(w, "Error al crear la canción", http.StatusInternalServerError)
-			return
-		}
-		list, err := queries.ListSongs(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener canciones", err, http.StatusInternalServerError)
-			return
-		}
-		views.SongList(list).Render(ctx, w)
-		views.FormSong(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
-
+		postSongs(w, r, queries)
 	case "/albums":
-		albumName := strings.TrimSpace(r.FormValue("album_name"))
-		if albumName == "" {
-			badRequest(w, "El título es obligatorio")
-			return
-		}
-		artistID, err := intRequerido(r.FormValue("artist_id_artist"))
-		if err != nil || artistID < 1 {
-			badRequest(w, "ID de artista inválido")
-			return
-		}
-		releaseDate, err := time.Parse("2006-01-02", r.FormValue("release_date"))
-		if err != nil {
-			badRequest(w, "Fecha de lanzamiento inválida")
-			return
-		}
-		albumPh, err := intOpcional(r.FormValue("album_ph"))
-		if err != nil || albumPh < 0 {
-			badRequest(w, "Valor de portada inválido")
-			return
-		}
-		albumDur, err := intOpcional(r.FormValue("album_dur"))
-		if err != nil || albumDur < 0 {
-			badRequest(w, "Duración inválida")
-			return
-		}
-		likes, err := intOpcional(r.FormValue("likes"))
-		if err != nil || likes < 0 {
-			badRequest(w, "Likes inválidos")
-			return
-		}
-		_, err = queries.CreateAlbum(ctx, bd.CreateAlbumParams{
-			AlbumName: albumName, AlbumDur: albumDur, AlbumPh: albumPh,
-			ReleaseDate: releaseDate, ArtistIDArtist: artistID, Likes: likes,
-		})
-		if err != nil {
-			http.Error(w, "Error al crear el álbum", http.StatusInternalServerError)
-			return
-		}
-		list, err := queries.ListAlbums(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener álbumes", err, http.StatusInternalServerError)
-			return
-		}
-		views.AlbumList(list).Render(ctx, w)
-		views.FormAlbum(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
-
+		postAlbums(w, r, queries)
 	case "/reviews":
-		text := strings.TrimSpace(r.FormValue("review_text"))
-		if text == "" {
-			badRequest(w, "El texto de la reseña es obligatorio")
-			return
-		}
-		rate, err := strconv.ParseFloat(r.FormValue("review_rate"), 64)
-		if err != nil || rate < 0 || rate > 5 {
-			badRequest(w, "Calificación inválida (0 a 5)")
-			return
-		}
-		date, err := time.Parse("2006-01-02", r.FormValue("review_date"))
-		if err != nil {
-			badRequest(w, "Fecha inválida")
-			return
-		}
-		userID, err := intRequerido(r.FormValue("user_id_user"))
-		if err != nil || userID < 1 {
-			badRequest(w, "ID de usuario inválido")
-			return
-		}
-		songID, err := nullInt32(r.FormValue("song_id_song"))
-		if err != nil {
-			badRequest(w, "ID de canción inválido")
-			return
-		}
-		albumID, err := nullInt32(r.FormValue("album_id_album"))
-		if err != nil {
-			badRequest(w, "ID de álbum inválido")
-			return
-		}
-		if !songID.Valid && !albumID.Valid {
-			badRequest(w, "Indicá un ID de canción o de álbum")
-			return
-		}
-		likes, err := intOpcional(r.FormValue("likes"))
-		if err != nil || likes < 0 {
-			badRequest(w, "Likes inválidos")
-			return
-		}
-		_, err = queries.CreateReview(ctx, bd.CreateReviewParams{
-			ReviewText: text, ReviewRate: rate, ReviewDate: date, UserIDUser: userID,
-			SongIDSong: songID, AlbumIDAlbum: albumID, Likes: likes,
-		})
-		if err != nil {
-			http.Error(w, "Error al crear la reseña", http.StatusInternalServerError)
-			return
-		}
-		list, err := queries.ListReviews(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener reseñas", err, http.StatusInternalServerError)
-			return
-		}
-		views.ReviewList(list).Render(ctx, w)
-		views.FormReview(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
-
+		postReviews(w, r, queries)
 	case "/artists":
-		artistName := strings.TrimSpace(r.FormValue("artist_name"))
-		if artistName == "" {
-			badRequest(w, "El nombre del artista es obligatorio")
-			return
-		}
-		photo, err := intOpcional(r.FormValue("artist_ph"))
-		if err != nil || photo < 0 {
-			badRequest(w, "Valor de foto inválido")
-			return
-		}
-		_, err = queries.CreateArtist(ctx, bd.CreateArtistParams{
-			ArtistName: artistName, Photo: photo, ArtistBio: strings.TrimSpace(r.FormValue("artist_bio")),
-		})
-		if err != nil {
-			http.Error(w, "Error al crear el artista", http.StatusInternalServerError)
-			return
-		}
-		list, err := queries.ListArtists(ctx)
-		if err != nil {
-			errorServidor(w, "Error al obtener artistas", err, http.StatusInternalServerError)
-			return
-		}
-		views.ArtistsList(list).Render(ctx, w)
-		views.FormArtist(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
-
+		postArtists(w, r, queries)
 	default:
 		http.NotFound(w, r)
 	}
+}
+
+// postUsers atiende POST /users: valida, crea y devuelve la lista de usuarios.
+func postUsers(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	userName := strings.TrimSpace(r.FormValue("user_name"))
+	if userName == "" {
+		badRequest(w, "El nombre de usuario es obligatorio")
+		return
+	}
+	amigos, err := intOpcional(r.FormValue("amigos"))
+	if err != nil || amigos < 0 {
+		badRequest(w, "Cantidad de amigos inválida")
+		return
+	}
+	photo, err := intOpcional(r.FormValue("user_ph"))
+	if err != nil || photo < 0 {
+		badRequest(w, "Valor de foto inválido")
+		return
+	}
+	_, err = queries.CreateUser(ctx, bd.CreateUserParams{UserName: userName, Amigos: amigos, Photo: photo})
+	if err != nil {
+		http.Error(w, "Error al crear el usuario", http.StatusInternalServerError)
+		return
+	}
+	list, err := queries.ListUsers(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener usuarios", err, http.StatusInternalServerError)
+		return
+	}
+	views.UserList(list).Render(ctx, w)
+	views.FormUser(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
+}
+
+// postSongs atiende POST /songs: valida, crea y devuelve la lista de canciones.
+func postSongs(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	songName := strings.TrimSpace(r.FormValue("song_name"))
+	if songName == "" {
+		badRequest(w, "El título es obligatorio")
+		return
+	}
+	albumID, err := intRequerido(r.FormValue("album_id_album"))
+	if err != nil || albumID < 1 {
+		badRequest(w, "ID de álbum inválido")
+		return
+	}
+	dur, err := intOpcional(r.FormValue("song_dur"))
+	if err != nil || dur < 0 {
+		badRequest(w, "Duración inválida")
+		return
+	}
+	likes, err := intOpcional(r.FormValue("likes"))
+	if err != nil || likes < 0 {
+		badRequest(w, "Likes inválidos")
+		return
+	}
+	_, err = queries.CreateSong(ctx, bd.CreateSongParams{
+		SongName: songName, SongDur: dur, AlbumIDAlbum: albumID, Likes: likes,
+	})
+	if err != nil {
+		http.Error(w, "Error al crear la canción", http.StatusInternalServerError)
+		return
+	}
+	list, err := queries.ListSongs(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener canciones", err, http.StatusInternalServerError)
+		return
+	}
+	views.SongList(list).Render(ctx, w)
+	views.FormSong(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
+}
+
+// postAlbums atiende POST /albums: valida, crea y devuelve la lista de álbumes.
+func postAlbums(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	albumName := strings.TrimSpace(r.FormValue("album_name"))
+	if albumName == "" {
+		badRequest(w, "El título es obligatorio")
+		return
+	}
+	artistID, err := intRequerido(r.FormValue("artist_id_artist"))
+	if err != nil || artistID < 1 {
+		badRequest(w, "ID de artista inválido")
+		return
+	}
+	releaseDate, err := time.Parse("2006-01-02", r.FormValue("release_date"))
+	if err != nil {
+		badRequest(w, "Fecha de lanzamiento inválida")
+		return
+	}
+	albumPh, err := intOpcional(r.FormValue("album_ph"))
+	if err != nil || albumPh < 0 {
+		badRequest(w, "Valor de portada inválido")
+		return
+	}
+	albumDur, err := intOpcional(r.FormValue("album_dur"))
+	if err != nil || albumDur < 0 {
+		badRequest(w, "Duración inválida")
+		return
+	}
+	likes, err := intOpcional(r.FormValue("likes"))
+	if err != nil || likes < 0 {
+		badRequest(w, "Likes inválidos")
+		return
+	}
+	_, err = queries.CreateAlbum(ctx, bd.CreateAlbumParams{
+		AlbumName: albumName, AlbumDur: albumDur, AlbumPh: albumPh,
+		ReleaseDate: releaseDate, ArtistIDArtist: artistID, Likes: likes,
+	})
+	if err != nil {
+		http.Error(w, "Error al crear el álbum", http.StatusInternalServerError)
+		return
+	}
+	list, err := queries.ListAlbums(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener álbumes", err, http.StatusInternalServerError)
+		return
+	}
+	views.AlbumList(list).Render(ctx, w)
+	views.FormAlbum(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
+}
+
+// postReviews atiende POST /reviews: valida, crea y devuelve la lista de reseñas.
+func postReviews(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	text := strings.TrimSpace(r.FormValue("review_text"))
+	if text == "" {
+		badRequest(w, "El texto de la reseña es obligatorio")
+		return
+	}
+	rate, err := strconv.ParseFloat(r.FormValue("review_rate"), 64)
+	if err != nil || rate < 0 || rate > 5 {
+		badRequest(w, "Calificación inválida (0 a 5)")
+		return
+	}
+	date, err := time.Parse("2006-01-02", r.FormValue("review_date"))
+	if err != nil {
+		badRequest(w, "Fecha inválida")
+		return
+	}
+	userID, err := intRequerido(r.FormValue("user_id_user"))
+	if err != nil || userID < 1 {
+		badRequest(w, "ID de usuario inválido")
+		return
+	}
+	songID, err := nullInt32(r.FormValue("song_id_song"))
+	if err != nil {
+		badRequest(w, "ID de canción inválido")
+		return
+	}
+	albumID, err := nullInt32(r.FormValue("album_id_album"))
+	if err != nil {
+		badRequest(w, "ID de álbum inválido")
+		return
+	}
+	if !songID.Valid && !albumID.Valid {
+		badRequest(w, "Indicá un ID de canción o de álbum")
+		return
+	}
+	likes, err := intOpcional(r.FormValue("likes"))
+	if err != nil || likes < 0 {
+		badRequest(w, "Likes inválidos")
+		return
+	}
+	_, err = queries.CreateReview(ctx, bd.CreateReviewParams{
+		ReviewText: text, ReviewRate: rate, ReviewDate: date, UserIDUser: userID,
+		SongIDSong: songID, AlbumIDAlbum: albumID, Likes: likes,
+	})
+	if err != nil {
+		http.Error(w, "Error al crear la reseña", http.StatusInternalServerError)
+		return
+	}
+	list, err := queries.ListReviews(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener reseñas", err, http.StatusInternalServerError)
+		return
+	}
+	views.ReviewList(list).Render(ctx, w)
+	views.FormReview(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
+}
+
+// postArtists atiende POST /artists: valida, crea y devuelve la lista de artistas.
+func postArtists(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	ctx := r.Context()
+	artistName := strings.TrimSpace(r.FormValue("artist_name"))
+	if artistName == "" {
+		badRequest(w, "El nombre del artista es obligatorio")
+		return
+	}
+	photo, err := intOpcional(r.FormValue("artist_ph"))
+	if err != nil || photo < 0 {
+		badRequest(w, "Valor de foto inválido")
+		return
+	}
+	_, err = queries.CreateArtist(ctx, bd.CreateArtistParams{
+		ArtistName: artistName, Photo: photo, ArtistBio: strings.TrimSpace(r.FormValue("artist_bio")),
+	})
+	if err != nil {
+		http.Error(w, "Error al crear el artista", http.StatusInternalServerError)
+		return
+	}
+	list, err := queries.ListArtists(ctx)
+	if err != nil {
+		errorServidor(w, "Error al obtener artistas", err, http.StatusInternalServerError)
+		return
+	}
+	views.ArtistsList(list).Render(ctx, w)
+	views.FormArtist(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
 }
 
 // HandleDELETE atiende DELETE /<entidad>/<id>
