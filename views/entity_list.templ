@@ -5,11 +5,11 @@ import (
 	db "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 )
 
-templ userList(users []db.User){
-    <section class="entity-list-panel"> 
+templ UserList(users []db.User){
+    <section class="entity-list-panel" id="user-list"> 
 		<div class="entity-list-header">
 			<h2>Todos los usuarios</h2>
-			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(users)) }</span>
+			@ListCount(len(users), false)
 		</div>
 		<ul id="lista">
 			for _, user := range users {
@@ -21,10 +21,13 @@ templ userList(users []db.User){
 						<span>(Foto ID: { fmt.Sprintf("%d", user.Photo) })</span>
 					}
 					
-					//-- Formulario para eliminar el usuario usando user.IDUser -->
-					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/users/%d/delete", user.IDUser)) } style="display:inline;">
-						<button type="submit">Eliminar</button>
-					</form>
+					<button type="button"
+						hx-delete={ fmt.Sprintf("/users/%d", user.IDUser) }
+						hx-target="closest li"
+						hx-swap="outerHTML"
+						hx-confirm="¿Seguro que querés eliminar este usuario?">
+						Eliminar
+					</button>
 				</li>
 			}
 		</ul>
@@ -32,11 +35,11 @@ templ userList(users []db.User){
 }
 
 
-templ artistsList(artists []db.Artist){
-    <section class="entity-list-panel"> 
+templ ArtistsList(artists []db.Artist){
+    <section class="entity-list-panel" id="artist-list"> 
 		<div class="entity-list-header">
 			<h2>Todos los artistas</h2>
-			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(artists)) }</span>
+			@ListCount(len(artists), false)
 		</div>
         <ul id="lista">
 			for _, artist := range artists {
@@ -47,10 +50,13 @@ templ artistsList(artists []db.Artist){
 						<span>(Foto ID: { fmt.Sprintf("%d", artist.Photo) })</span>
 					}
 					
-					//-- Formulario para eliminar el artista usando artist.IDArtist -->
-					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/artists/%d/delete", artist.IDArtist)) } style="display:inline;">
-						<button type="submit">Eliminar</button>
-					</form>
+					<button type="button"
+						hx-delete={ fmt.Sprintf("/artists/%d", artist.IDArtist) }
+						hx-target="closest li"
+						hx-swap="outerHTML"
+						hx-confirm="¿Seguro que querés eliminar este artista?">
+						Eliminar
+					</button>
 				</li>
 			}
 		</ul>
@@ -58,11 +64,11 @@ templ artistsList(artists []db.Artist){
 }
 
 
-templ songList(songs []db.Song){
-    <section class="entity-list-panel"> 
+templ SongList(songs []db.Song){
+    <section class="entity-list-panel" id="song-list"> 
 		<div class="entity-list-header">
 			<h2>Todas las canciones</h2>
-			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(songs)) }</span>
+			@ListCount(len(songs), false)
 		</div>
         <ul id="lista">
 			for _, song := range songs {
@@ -72,10 +78,13 @@ templ songList(songs []db.Song){
                     <span>(Duration: { fmt.Sprintf("%d", song.SongDur) })</span>
                     <span>(Id album: { fmt.Sprintf("%d", song.AlbumIDAlbum) })</span>
 					
-					//-- Formulario para eliminar la canción usando song.IDSong -->
-					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/songs/%d/delete", song.IDSong)) } style="display:inline;">
-						<button type="submit">Eliminar</button>
-					</form>
+					<button type="button"
+						hx-delete={ fmt.Sprintf("/songs/%d", song.IDSong) }
+						hx-target="closest li"
+						hx-swap="outerHTML"
+						hx-confirm="¿Seguro que querés eliminar esta canción?">
+						Eliminar
+					</button>
 				</li>
 			}
 		</ul>
@@ -83,18 +92,18 @@ templ songList(songs []db.Song){
 }
 
 
-templ reviewList(reviews []db.Review){
-    <section class="entity-list-panel"> 
+templ ReviewList(reviews []db.Review){
+    <section class="entity-list-panel" id="review-list"> 
 		<div class="entity-list-header">
 			<h2>Todas las reviews</h2>
-			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(reviews)) }</span>
+			@ListCount(len(reviews), false)
 		</div>
         <ul id="lista">
 			for _, review := range reviews {
 				<li>
 					<span>(Review Text: { fmt.Sprintf("%s", review.ReviewText)})</span>
 					<span>(Review Rate: { fmt.Sprintf("%.1f", review.ReviewRate)})</span>
-					<span>(Review Date: { fmt.Sprintf("%v", review.ReviewDate)})</span>
+					<span>(Review Date: { review.ReviewDate.Format("02/01/2006")})</span>
 					<span>(User (ID): { fmt.Sprintf("%d", review.UserIDUser)})</span>
 					if review.SongIDSong.Valid {
 						<span>(Song (ID (optional)): { fmt.Sprintf("%d", review.SongIDSong.Int32)})</span>
@@ -104,29 +113,31 @@ templ reviewList(reviews []db.Review){
 					}
 					<span>(Likes: { fmt.Sprintf("%d", review.Likes)})</span>
         
-					//-- Formulario para eliminar la review usando review.IDReview -->
-					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/reviews/%d/delete", review.IDReview)) } style="display:inline;">
-						<button type="submit">Eliminar</button>
-					</form>
+					<button type="button"
+						hx-delete={ fmt.Sprintf("/reviews/%d", review.IDReview) }
+						hx-target="closest li"
+						hx-swap="outerHTML"
+						hx-confirm="¿Seguro que querés eliminar esta reseña?">
+						Eliminar
+					</button>
 				</li>
 			}
 		</ul>
 	</section>
 }
 
-
-templ albumList(albums []db.Album){
-    <section class="entity-list-panel"> 
+templ AlbumList(albums []db.Album){
+    <section class="entity-list-panel" id="album-list"> 
 		<div class="entity-list-header">
 			<h2>Todos los álbumes</h2>
-			<span class="entity-count" id="lista-count">{ fmt.Sprintf("%d", len(albums)) }</span>
+			@ListCount(len(albums), false)
 		</div>
         <ul id="lista">
 			for _, album := range albums {
 				<li>
 					<span>(Album name: { fmt.Sprintf("%s", album.AlbumName) })</span>
 					<span>(Duration: { fmt.Sprintf("%d", album.AlbumDur) })</span>
-                    <span>(Release date: { fmt.Sprintf("%v", album.ReleaseDate) })</span>
+                    <span>(Release date: { album.ReleaseDate.Format("02/01/2006") })</span>
 					<span>(Likes: { fmt.Sprintf("%d", album.Likes) })</span>
                     <span>(Id artista: { fmt.Sprintf("%d", album.ArtistIDArtist) })</span>
                     
@@ -134,12 +145,26 @@ templ albumList(albums []db.Album){
 						<span>(Foto ID: { fmt.Sprintf("%d", album.AlbumPh) })</span>
 					}
 					
-					//-- Formulario para eliminar el álbum usando album.IDAlbum -->
-					<form method="POST" action={ templ.SafeURL(fmt.Sprintf("/albums/%d/delete", album.IDAlbum)) } style="display:inline;">
-						<button type="submit">Eliminar</button>
-					</form>
+					<button type="button"
+						hx-delete={ fmt.Sprintf("/albums/%d", album.IDAlbum) }
+						hx-target="closest li"
+						hx-swap="outerHTML"
+						hx-confirm="¿Seguro que querés eliminar este álbum?">
+						Eliminar
+					</button>
 				</li>
 			}
 		</ul>
 	</section>
+}
+
+// ListCount es el contador de elementos de una lista.
+// Con oob=true se renderiza con hx-swap-oob para que HTMX lo reemplace
+// en la página aunque no sea el hx-target (se usa en la respuesta del DELETE).
+templ ListCount(n int, oob bool) {
+	<span class="entity-count" id="lista-count"
+		if oob {
+			hx-swap-oob="true"
+		}
+	>{ fmt.Sprintf("%d", n) }</span>
 }

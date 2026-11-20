@@ -14,4 +14,5 @@ Hace que no se borren los datos del docker, manteniendo los datos ingresados al 
 JamBox es una red social simil a Letterbox, pero de canciones y álbumes musicales. 
 Funcionará através de una API gratis de Spotify, donde los usuarios podrán buscar sus álbumes, canciones u artistas favoritos, con el fin de calificarlos, "likearlos" y compartir su opinión con otros usuarios mediante reviews.
 Las entidades definidas y más información sobre la Base de Datos está definida en el archivo "persistencia.md".
+La creación y el borrado de entidades sin recargar la página (HTMX, TP6) están documentados en el archivo "htmx.md".
 Al correr **make run-app** se hará lo siguiente: se dará de baja cualquier contenedor activo, se generará el sqlc, se generará el código go de templ, se construirá la imagen, se activará el docker, se correrá el servidor go, y finalmente se desactivará el docker, borrando todos los datos del contenedor.

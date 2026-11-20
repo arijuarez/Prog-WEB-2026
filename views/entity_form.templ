@@ -1,7 +1,11 @@
 package views
 
-templ formAlbum() {
-    <form id="form-entidad" method="POST" action="/albums">
+templ FormAlbum(oob bool) {
+    <form id="form-entidad" hx-post="/albums" hx-target="#album-list" hx-swap="outerHTML"
+        if oob {
+            hx-swap-oob="true"
+        }
+    >
         <input type="text" name="album_name" placeholder="Título del álbum" required/>
         <input type="number" name="artist_id_artist" placeholder="ID del artista" min="1" required/>
         <input type="date" name="release_date" required/>
@@ -12,8 +16,12 @@ templ formAlbum() {
     </form>
 }
 
-templ formArtist() {
-    <form id="form-entidad" method="POST" action="/artists">
+templ FormArtist(oob bool) {
+    <form id="form-entidad" hx-post="/artists" hx-target="#artist-list" hx-swap="outerHTML"
+        if oob {
+            hx-swap-oob="true"
+        }
+    >
         <input type="text" name="artist_name" placeholder="Nombre del artista" required/>
         <input type="text" name="artist_bio" placeholder="Descripción (opcional)"/>
         <input type="number" name="artist_ph" placeholder="ID de foto (opcional)" min="0"/>
@@ -21,8 +29,12 @@ templ formArtist() {
     </form>
 }
 
-templ formSong() {
-    <form id="form-entidad" method="POST" action="/songs">
+templ FormSong(oob bool) {
+    <form id="form-entidad" hx-post="/songs" hx-target="#song-list" hx-swap="outerHTML"
+        if oob {
+            hx-swap-oob="true"
+        }
+    >
         <input type="text" name="song_name" placeholder="Título de la canción" required/>
         <input type="number" name="album_id_album" placeholder="ID del álbum" min="1" required/>
         <input type="number" name="song_dur" placeholder="Duración (segundos, opcional)" min="0"/>
@@ -31,8 +43,12 @@ templ formSong() {
     </form>
 }
 
-templ formReview() {
-      <form id="form-entidad" method="POST" action="/reviews">
+templ FormReview(oob bool) {
+      <form id="form-entidad" hx-post="/reviews" hx-target="#review-list" hx-swap="outerHTML"
+        if oob {
+            hx-swap-oob="true"
+        }
+    >
         <input type="date"   name="review_date"     placeholder="Fecha de la reseña" required/>
         <input type="number" name="user_id_user"    placeholder="ID de usuario" min="1" required/>
         <input type="number" name="song_id_song"    placeholder="ID de canción (opcional)" min="1"/>
@@ -44,8 +60,12 @@ templ formReview() {
       </form>
 }
 
-templ formUser() {
-    <form id="form-entidad" method="POST" action="/users">
+templ FormUser(oob bool) {
+    <form id="form-entidad" hx-post="/users" hx-target="#user-list" hx-swap="outerHTML"
+        if oob {
+            hx-swap-oob="true"
+        }
+    >
         <input type="text" name="user_name" placeholder="Nombre de usuario" required/>
         <input type="number" name="amigos" placeholder="Cantidad de amigos (opcional)" min="0"/>
         <input type="number" name="user_ph" placeholder="ID de foto (opcional)" min="0"/>

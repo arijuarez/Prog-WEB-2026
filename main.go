@@ -68,6 +68,8 @@ func main() {
 			Handlers.HandleGET(w, r, queries)
 		case http.MethodPost:
 			Handlers.HandlePOST(w, r, queries)
+		case http.MethodDelete:
+			Handlers.HandleDELETE(w, r, queries)
 		default:
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}

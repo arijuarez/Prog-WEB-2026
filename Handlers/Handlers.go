@@ -1,7 +1,9 @@
 package Handlers
 
 import (
+	"context"
 	"database/sql"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -36,6 +38,12 @@ func nullInt32(s string) (sql.NullInt32, error) {
 	return sql.NullInt32{Int32: n, Valid: err == nil}, err
 }
 
+// errorServidor registra el error real en el log y le responde al cliente un mensaje genérico.
+func errorServidor(w http.ResponseWriter, msg string, err error, code int) {
+	log.Printf("%s: %v", msg, err)
+	http.Error(w, msg, code)
+}
+
 func badRequest(w http.ResponseWriter, msg string) {
 	http.Error(w, msg, http.StatusBadRequest)
 }
@@ -50,35 +58,35 @@ func HandleGET(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 	case "/users":
 		list, err := queries.ListUsers(ctx)
 		if err != nil {
-			http.Error(w, "Error al obtener usuarios: "+err.Error(), http.StatusInternalServerError)
+			errorServidor(w, "Error al obtener usuarios", err, http.StatusInternalServerError)
 			return
 		}
 		views.IndexUsers(list).Render(ctx, w)
 	case "/songs":
 		list, err := queries.ListSongs(ctx)
 		if err != nil {
-			http.Error(w, "Error al obtener canciones: "+err.Error(), http.StatusInternalServerError)
+			errorServidor(w, "Error al obtener canciones", err, http.StatusInternalServerError)
 			return
 		}
 		views.IndexSongs(list).Render(ctx, w)
 	case "/albums":
 		list, err := queries.ListAlbums(ctx)
 		if err != nil {
-			http.Error(w, "Error al obtener álbumes: "+err.Error(), http.StatusInternalServerError)
+			errorServidor(w, "Error al obtener álbumes", err, http.StatusInternalServerError)
 			return
 		}
 		views.IndexAlbums(list).Render(ctx, w)
 	case "/reviews":
 		list, err := queries.ListReviews(ctx)
 		if err != nil {
-			http.Error(w, "Error al obtener reseñas: "+err.Error(), http.StatusInternalServerError)
+			errorServidor(w, "Error al obtener reseñas", err, http.StatusInternalServerError)
 			return
 		}
 		views.IndexReviews(list).Render(ctx, w)
 	case "/artists":
 		list, err := queries.ListArtists(ctx)
 		if err != nil {
-			http.Error(w, "Error al obtener artistas: "+err.Error(), http.StatusInternalServerError)
+			errorServidor(w, "Error al obtener artistas", err, http.StatusInternalServerError)
 			return
 		}
 		views.IndexArtists(list).Render(ctx, w)
@@ -93,12 +101,6 @@ func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 	ctx := r.Context()
 	if err := r.ParseForm(); err != nil {
 		badRequest(w, "Error al parsear el formulario")
-		return
-	}
-
-	// Borrado: POST /<entidad>/<id>/delete
-	if strings.HasSuffix(r.URL.Path, "/delete") {
-		handleDelete(w, r, queries)
 		return
 	}
 
@@ -124,7 +126,13 @@ func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 			http.Error(w, "Error al crear el usuario", http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/users", http.StatusSeeOther)
+		list, err := queries.ListUsers(ctx)
+		if err != nil {
+			errorServidor(w, "Error al obtener usuarios", err, http.StatusInternalServerError)
+			return
+		}
+		views.UserList(list).Render(ctx, w)
+		views.FormUser(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
 
 	case "/songs":
 		songName := strings.TrimSpace(r.FormValue("song_name"))
@@ -154,7 +162,13 @@ func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 			http.Error(w, "Error al crear la canción", http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/songs", http.StatusSeeOther)
+		list, err := queries.ListSongs(ctx)
+		if err != nil {
+			errorServidor(w, "Error al obtener canciones", err, http.StatusInternalServerError)
+			return
+		}
+		views.SongList(list).Render(ctx, w)
+		views.FormSong(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
 
 	case "/albums":
 		albumName := strings.TrimSpace(r.FormValue("album_name"))
@@ -195,7 +209,13 @@ func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 			http.Error(w, "Error al crear el álbum", http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/albums", http.StatusSeeOther)
+		list, err := queries.ListAlbums(ctx)
+		if err != nil {
+			errorServidor(w, "Error al obtener álbumes", err, http.StatusInternalServerError)
+			return
+		}
+		views.AlbumList(list).Render(ctx, w)
+		views.FormAlbum(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
 
 	case "/reviews":
 		text := strings.TrimSpace(r.FormValue("review_text"))
@@ -245,7 +265,13 @@ func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 			http.Error(w, "Error al crear la reseña", http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/reviews", http.StatusSeeOther)
+		list, err := queries.ListReviews(ctx)
+		if err != nil {
+			errorServidor(w, "Error al obtener reseñas", err, http.StatusInternalServerError)
+			return
+		}
+		views.ReviewList(list).Render(ctx, w)
+		views.FormReview(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
 
 	case "/artists":
 		artistName := strings.TrimSpace(r.FormValue("artist_name"))
@@ -265,17 +291,23 @@ func HandlePOST(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 			http.Error(w, "Error al crear el artista", http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/artists", http.StatusSeeOther)
+		list, err := queries.ListArtists(ctx)
+		if err != nil {
+			errorServidor(w, "Error al obtener artistas", err, http.StatusInternalServerError)
+			return
+		}
+		views.ArtistsList(list).Render(ctx, w)
+		views.FormArtist(true).Render(ctx, w) // form vacío (OOB) → limpia el formulario
 
 	default:
 		http.NotFound(w, r)
 	}
 }
 
-// handleDelete atiende POST /<entidad>/<id>/delete
-func handleDelete(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
-	partes := strings.Split(strings.Trim(r.URL.Path, "/"), "/") // [entidad, id, "delete"]
-	if len(partes) != 3 {
+// HandleDELETE atiende DELETE /<entidad>/<id>
+func HandleDELETE(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
+	partes := strings.Split(strings.Trim(r.URL.Path, "/"), "/") // [entidad, id]
+	if len(partes) != 2 {
 		http.NotFound(w, r)
 		return
 	}
@@ -302,8 +334,40 @@ func handleDelete(w http.ResponseWriter, r *http.Request, queries *bd.Queries) {
 		return
 	}
 	if err != nil {
-		http.Error(w, "No se pudo eliminar (puede tener datos relacionados): "+err.Error(), http.StatusConflict)
+		errorServidor(w, "No se pudo eliminar (puede tener datos relacionados)", err, http.StatusConflict)
 		return
 	}
-	http.Redirect(w, r, "/"+partes[0], http.StatusSeeOther)
+
+	w.WriteHeader(http.StatusOK)
+
+	// La respuesta solo contiene el contador con hx-swap-oob="true":
+	// HTMX lo saca de la respuesta y reemplaza #lista-count en la página.
+	// Lo que queda para el hx-target (el <li>) es vacío, así que el <li> desaparece.
+	n, err := contarEntidades(ctx, queries, partes[0])
+	if err != nil {
+		return // el borrado ya se hizo; si falla el conteo, solo no se actualiza el número
+	}
+	views.ListCount(n, true).Render(ctx, w)
+}
+
+// contarEntidades devuelve cuántos elementos quedan de una entidad.
+func contarEntidades(ctx context.Context, queries *bd.Queries, entidad string) (int, error) {
+	switch entidad {
+	case "users":
+		l, err := queries.ListUsers(ctx)
+		return len(l), err
+	case "songs":
+		l, err := queries.ListSongs(ctx)
+		return len(l), err
+	case "albums":
+		l, err := queries.ListAlbums(ctx)
+		return len(l), err
+	case "reviews":
+		l, err := queries.ListReviews(ctx)
+		return len(l), err
+	case "artists":
+		l, err := queries.ListArtists(ctx)
+		return len(l), err
+	}
+	return 0, nil
 }

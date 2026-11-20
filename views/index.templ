@@ -16,9 +16,9 @@ templ IndexSongs(songs []db.Song){
         <div class="entity-body">
             <aside class="entity-form-panel">
                 <h2>+ Nueva canción</h2>
-                @formSong()
+                @FormSong(false)
             </aside>
-            @songList(songs)
+            @SongList(songs)
         </div>
     }
 }
@@ -35,9 +35,9 @@ templ IndexReviews(reviews []db.Review){
     <div class="entity-body">
     <aside class="entity-form-panel">
       <h2>+ Nueva reseña</h2>
-      @formReview()
+      @FormReview(false)
       </aside>
-      @reviewList(reviews)
+      @ReviewList(reviews)
       </div>
     }
 }
@@ -54,9 +54,9 @@ templ IndexAlbums(albums []db.Album){
         <div class="entity-body">
             <aside class="entity-form-panel">
                 <h2>+ Nuevo álbum</h2>
-                @formAlbum()
+                @FormAlbum(false)
             </aside>
-            @albumList(albums)
+            @AlbumList(albums)
         </div>
     }
 }
@@ -73,9 +73,9 @@ templ IndexUsers(users []db.User){
         <div class="entity-body">
             <aside class="entity-form-panel">
                 <h2>+ Nuevo usuario</h2>
-                @formUser()
+                @FormUser(false)
             </aside>
-            @ userList(users)
+            @UserList(users)
         </div>
     }
 }
@@ -92,9 +92,9 @@ templ IndexArtists(artists []db.Artist){
     <div class="entity-body">
     <aside class="entity-form-panel">
       <h2>+ Nuevo artista</h2>
-      @formArtist()
+      @FormArtist(false)
       </aside>
-      @artistsList(artists)
+      @ArtistsList(artists)
       </div>
     }
 }
