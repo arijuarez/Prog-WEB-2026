@@ -681,8 +681,9 @@ button {
   --ease: cubic-bezier(.32, .72, 0, 1);
 }
 
-/* — Header (vidrio esmerilado) — */
-.page-header {
+/* — Header de las páginas de entidades —
+   El layout usa id="page-header" / id="page-nav" con <li> directos en el <nav>. */
+#page-header {
   position: sticky;
   top: 0;
   z-index: 50;
@@ -690,47 +691,90 @@ button {
   align-items: center;
   gap: 1.5rem;
   flex-wrap: wrap;
-  min-height: var(--header-h);
-  padding: 0.5rem max(1rem, calc((100% - var(--container)) / 2));
-  background: var(--glass-dark);
+  min-height: 68px;
+  padding: 0.6rem max(1rem, calc((100% - var(--container)) / 2));
+  background: color-mix(in srgb, var(--ciruela) 94%, transparent);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
   color: var(--crema);
-  border-bottom: 1px solid rgba(237, 227, 228, .08);
+  box-shadow: 0 8px 24px rgba(62, 25, 41, .18);
+}
+/* línea de acento degradada debajo del header */
+#page-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--menta) 30%, var(--salvia) 70%, transparent);
+  opacity: .55;
 }
 
+/* logo con un mini vinilo delante */
 .page-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-family: var(--font-title);
-  font-weight: 700;
-  font-size: 1.4rem;
+  font-weight: 800;
+  font-size: 1.5rem;
   letter-spacing: -0.03em;
   color: var(--menta);
   transition: opacity .2s var(--ease);
 }
-.page-logo:hover { opacity: .8; text-decoration: none; }
-
-.page-nav {
-  display: flex;
-  gap: 0.25rem;
-  margin-left: auto;
-  flex-wrap: wrap;
+.page-logo::before {
+  content: "";
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, var(--menta) 0 18%, var(--ciruela) 18% 24%, transparent 24%),
+    repeating-radial-gradient(circle at center, rgba(237, 227, 228, .22) 0 1px, transparent 1px 3px),
+    #1f0a14;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--menta) 45%, transparent);
+  transition: transform .8s var(--ease);
 }
-.page-nav a {
-  padding: 0.4rem 0.9rem;
+.page-logo:hover { opacity: .9; text-decoration: none; }
+.page-logo:hover::before { transform: rotate(360deg); }
+
+/* navegación en una "cápsula" */
+#page-nav {
+  display: flex;
+  gap: 0.2rem;
+  margin-left: auto;
+  padding: 0.3rem;
+  flex-wrap: wrap;
+  background: rgba(237, 227, 228, .06);
+  border: 1px solid rgba(237, 227, 228, .08);
+  border-radius: var(--r-pill);
+}
+#page-nav li { list-style: none; }
+#page-nav a {
+  display: block;
+  padding: 0.45rem 1rem;
   border-radius: var(--r-pill);
   color: var(--malva);
   font-size: 0.92rem;
-  font-weight: 500;
-  transition: background-color .2s var(--ease), color .2s var(--ease);
+  font-weight: 600;
+  transition: background-color .2s var(--ease), color .2s var(--ease), transform .15s var(--ease);
 }
-.page-nav a:hover {
+#page-nav a:hover {
   color: var(--crema);
-  background: rgba(237, 227, 228, .08);
+  background: rgba(237, 227, 228, .1);
   text-decoration: none;
 }
-.page-nav a[aria-current="page"] {
-  color: var(--crema);
-  background: rgba(237, 227, 228, .14);
+#page-nav a:active { transform: scale(.96); }
+
+/* página actual resaltada en menta (detecta qué lista hay en la página) */
+body:has(#song-list) #nav-songs a,
+body:has(#artist-list) #nav-artists a,
+body:has(#album-list) #nav-albums a,
+body:has(#review-list) #nav-reviews a,
+body:has(#user-list) #nav-members a {
+  color: var(--ciruela);
+  background: var(--menta);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--menta) 35%, transparent);
 }
 
 /* — Banner de página — */
@@ -746,7 +790,7 @@ button {
   color: var(--crema);
 }
 
-/* disco decorativo: más tenue y desenfocado en los bordes */
+/* vinilo decorativo */
 .entity-hero::before {
   content: "";
   position: absolute;
@@ -763,6 +807,12 @@ button {
   box-shadow: 0 30px 80px rgba(0, 0, 0, .35);
   opacity: .45;
   pointer-events: none;
+  animation: girar-vinilo 40s linear infinite;
+}
+
+@keyframes girar-vinilo {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to   { transform: translateY(-50%) rotate(360deg); }
 }
 
 .entity-hero-inner {
@@ -774,17 +824,21 @@ button {
 
 .entity-hero-label {
   display: inline-block;
-  margin-bottom: 0.6rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  margin-bottom: 0.8rem;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--menta);
+  background: color-mix(in srgb, var(--menta) 14%, transparent);
+  border-radius: var(--r-pill);
 }
 
 .entity-hero h1 {
   margin-bottom: 0.75rem;
   font-size: clamp(2.2rem, 5.5vw, 4rem);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.035em;
   color: var(--crema);
@@ -800,33 +854,53 @@ button {
   color: var(--malva);
 }
 
-/* — Contenedor principal — */
+/* — Contenedor principal: formulario | lista — */
 .entity-body {
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: 330px minmax(0, 1fr);
   gap: 2.5rem;
   align-items: start;
   width: min(var(--container), 100% - 2rem);
   margin: 3rem auto 5rem;
 }
 
-/* — Panel del formulario — */
+/* ============ FORMULARIO DE CREACIÓN ============ */
 .entity-form-panel {
   position: sticky;
   top: calc(var(--header-h) + 1.25rem);
+  overflow: hidden;
   padding: 1.75rem;
-  background: var(--ciruela);
+  background:
+    radial-gradient(140% 90% at 100% 0%,
+      color-mix(in srgb, var(--ciruela) 85%, var(--menta)) 0%,
+      var(--ciruela) 55%);
   color: var(--crema);
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-lg);
 }
 
 .entity-form-panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   margin-bottom: 1.25rem;
   font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--crema);
+}
+/* nota musical delante del título */
+.entity-form-panel h2::before {
+  content: "♪";
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  font-size: 1.05rem;
+  color: var(--ciruela);
+  background: var(--menta);
+  border-radius: 50%;
 }
 
 .entity-form-panel form {
@@ -846,8 +920,9 @@ button {
   font: inherit;
   font-size: 0.98rem;
   color: var(--crema);
+  color-scheme: dark; /* ícono del calendario y flechas claras sobre fondo oscuro */
   background: rgba(237, 227, 228, .08);
-  border: 1px solid transparent;
+  border: 1px solid rgba(237, 227, 228, .06);
   border-radius: var(--r-sm);
   transition: background-color .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
 }
@@ -868,27 +943,39 @@ button {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--menta) 28%, transparent);
 }
 
-.entity-form-panel textarea { resize: vertical; min-height: 5.5rem; }
+.entity-form-panel textarea { resize: vertical; min-height: 6rem; }
 
 .entity-form-panel button[type="submit"] {
   margin-top: 0.5rem;
-  padding: 0.8rem 1.25rem;
-  font-weight: 600;
+  padding: 0.85rem 1.25rem;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--ciruela);
   background: var(--menta);
   border: 0;
   border-radius: var(--r-pill);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--menta) 30%, transparent);
   cursor: pointer;
-  transition: background-color .2s var(--ease), transform .15s var(--ease);
+  transition: background-color .2s var(--ease), transform .15s var(--ease), box-shadow .2s var(--ease);
 }
-.entity-form-panel button[type="submit"]:hover { background: var(--salvia); }
+.entity-form-panel button[type="submit"]:hover {
+  background: var(--salvia);
+  transform: translateY(-1px);
+}
 .entity-form-panel button[type="submit"]:active { transform: scale(.98); }
 
-/* — Panel de la lista — */
+/* Mientras HTMX envía el formulario (clase htmx-request) */
+.entity-form-panel form.htmx-request button[type="submit"] {
+  opacity: .6;
+  cursor: progress;
+}
+
+/* ============ LISTA DE ENTIDADES ============ */
+.entity-list-panel { min-width: 0; }
+
 .entity-list-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.25rem;
@@ -898,16 +985,19 @@ button {
 
 .entity-list-header h2 {
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.03em;
 }
 
 .entity-count {
-  padding: 0.2rem 0.7rem;
-  font-size: 0.85rem;
-  font-weight: 500;
+  min-width: 2.2rem;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
   color: var(--ciruela);
-  background: color-mix(in srgb, var(--malva) 22%, transparent);
+  background: var(--menta);
   border-radius: var(--r-pill);
 }
 
@@ -917,87 +1007,181 @@ button {
   gap: 0.75rem;
 }
 
-/* — Ítem de la lista — */
-.item {
+/* — Tarjeta de cada entidad —
+   Estructura real: <li> <span>…</span> <span>…</span> … <button>Eliminar</button> </li>
+   El primer <span> es el dato principal (nombre / título); el resto se muestran como etiquetas. */
+#lista > li {
+  position: relative;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
-  padding: 1.1rem 1.25rem;
+  gap: 0.4rem;
+  min-height: 4.75rem;
+  padding: 1rem 8rem 1rem 4.6rem;
   background: #fff;
   border: 1px solid var(--hairline);
   border-radius: var(--r-md);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow .25s var(--ease), border-color .25s var(--ease);
+  transition: box-shadow .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease);
 }
-.item:hover {
+#lista > li:hover {
   border-color: var(--hairline-strong);
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
-.item-index {
-  flex-shrink: 0;
-  min-width: 1.75rem;
+/* Ícono a la izquierda: un mini vinilo */
+#lista > li::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  width: 2.6rem;
+  height: 2.6rem;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, var(--menta) 0 16%, var(--ciruela) 16% 20%, transparent 20%),
+    repeating-radial-gradient(circle at center, rgba(175, 159, 165, .25) 0 1px, transparent 1px 4px),
+    var(--ciruela);
+  transition: transform .6s var(--ease);
+}
+#lista > li:hover::before { transform: translateY(-50%) rotate(180deg); }
+
+/* Usuarios y artistas: avatar en lugar de vinilo */
+#user-list #lista > li::before,
+#artist-list #lista > li::before {
+  content: "♫";
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  color: var(--ciruela);
+  background: linear-gradient(135deg, var(--menta), var(--salvia));
+}
+#artist-list #lista > li::before { content: "★"; }
+
+/* Reseñas: comilla */
+#review-list #lista > li::before {
+  content: "“";
+  display: grid;
+  place-items: center;
+  padding-top: 0.55rem;
   font-family: var(--font-title);
-  font-size: 1rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  color: var(--malva);
-  user-select: none;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--menta);
+  background: var(--ciruela);
 }
 
-.item-datos {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
+/* Datos: etiquetas */
+#lista > li > span {
+  padding: 0.15rem 0.65rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--ciruela) 80%, transparent);
+  background: color-mix(in srgb, var(--malva) 16%, transparent);
+  border-radius: var(--r-pill);
   overflow-wrap: anywhere;
 }
 
-.item-datos .item-name {
+#lista > li > span strong {
+  font-weight: 700;
+  color: var(--ciruela);
+}
+
+/* ID: etiqueta destacada en ciruela/menta */
+#lista > li > span.chip-id {
   font-family: var(--font-title);
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--menta);
+  background: var(--ciruela);
+}
+#lista > li > span.chip-id strong { color: var(--menta); }
+
+/* Calificación de una reseña */
+#lista > li > span.chip-rate {
+  color: var(--ciruela);
+  background: color-mix(in srgb, var(--menta) 45%, transparent);
+}
+
+/* Descripción larga (bio del artista): línea completa, sin etiqueta */
+#lista > li > span.item-desc {
+  flex-basis: 100%;
+  order: 1;
+  margin-top: 0.15rem;
+  padding: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--ciruela) 70%, transparent);
+  background: none;
+  border-radius: 0;
+}
+
+/* Dato principal: ocupa toda la fila, estilo título */
+#lista > li > span:first-child {
+  flex-basis: 100%;
+  padding: 0;
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 700;
   letter-spacing: -0.015em;
   color: var(--ciruela);
+  background: none;
+  border-radius: 0;
 }
 
-.item-datos span {
-  display: flex;
-  gap: 0.35rem;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: color-mix(in srgb, var(--ciruela) 72%, transparent);
-}
-
-.item-datos span strong {
-  font-weight: 600;
-  color: var(--ciruela);
-}
-
-.btn-delete {
-  flex-shrink: 0;
-  padding: 0.4rem 0.95rem;
-  font-size: 0.85rem;
+/* El texto de una reseña se lee como cita */
+#review-list #lista > li > span:first-child {
+  font-family: var(--font-body);
+  font-size: 1rem;
   font-weight: 500;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* — Botón Eliminar — */
+#lista > li > button {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: #8b1e1e;
   background: rgba(139, 30, 30, .08);
   border: 0;
   border-radius: var(--r-pill);
   cursor: pointer;
-  transition: background-color .2s var(--ease), color .2s var(--ease), transform .15s var(--ease);
+  transition: background-color .2s var(--ease), color .2s var(--ease);
 }
-.btn-delete:hover {
-  background: #8b1e1e;
+#lista > li > button:hover {
   color: var(--crema);
+  background: #8b1e1e;
 }
-.btn-delete:active { transform: scale(.96); }
+#lista > li > button:active { transform: translateY(-50%) scale(.96); }
+
+/* Mientras HTMX procesa el borrado */
+#lista > li > button.htmx-request {
+  opacity: .6;
+  cursor: progress;
+}
+
+/* Lista vacía */
+#lista:empty::after {
+  content: "Todavía no hay nada por acá. ¡Creá el primero con el formulario!";
+  display: block;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: color-mix(in srgb, var(--ciruela) 65%, transparent);
+  border: 2px dashed var(--hairline-strong);
+  border-radius: var(--r-md);
+}
 
 /* — Foco visible para teclado — */
-.page-nav a:focus-visible,
+#page-nav a:focus-visible,
 .page-logo:focus-visible,
-.btn-delete:focus-visible,
+#lista > li > button:focus-visible,
 .entity-form-panel button[type="submit"]:focus-visible {
   outline: 3px solid var(--menta);
   outline-offset: 2px;
@@ -1013,13 +1197,20 @@ button {
 @media (max-width: 540px) {
   .entity-hero { padding: 3rem 0 2.5rem; }
   .entity-form-panel { padding: 1.4rem; }
-  .item { flex-wrap: wrap; }
-  .page-nav { margin-left: 0; }
+  #page-nav { margin-left: 0; border-radius: var(--r-md); }
+  #lista > li { padding: 1rem 1rem 1rem 4.2rem; }
+  #lista > li > button {
+    position: static;
+    margin-top: 0.4rem;
+    transform: none;
+  }
+  #lista > li > button:active { transform: scale(.96); }
 }
 
 /* — Respeta preferencia de movimiento reducido — */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
+    animation: none !important;
     transition-duration: .01ms !important;
   }
 }

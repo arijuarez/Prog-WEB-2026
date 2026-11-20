@@ -60,7 +60,12 @@ func main() {
 
 	// Archivos estáticos (styles.css, imágenes, js) desde ./static
 	fileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
+	// Cache-Control: no-cache → el navegador pregunta siempre si el archivo cambió
+	// (si no cambió recibe un 304 y usa su copia). Así los cambios de CSS se ven sin forzar recarga.
+	http.Handle("/static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache")
+		fileServer.ServeHTTP(w, r)
+	})))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {

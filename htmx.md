@@ -13,7 +13,7 @@ Las entidades que se pueden crear y borrar son: usuarios, canciones, álbumes, r
 Se agregó el script de HTMX en el `<head>` de los dos layouts:
 
 ```html
-<meta name="htmx-config" content='{"noSwap":[204,304,"4xx","5xx"]}'>
+<meta name="htmx-config" content='{"noSwap":[204,304,"4xx","5xx"],"allowEmptySwapAfterOOB":true}'>
 <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0/dist/htmx.min.js"></script>
 ```
 
@@ -149,7 +149,9 @@ La respuesta del DELETE queda así:
 <span class="entity-count" id="lista-count" hx-swap-oob="true">4</span>
 ```
 
-HTMX extrae el `<span>` OOB y actualiza el número. Lo que queda para el `<li>` es vacío, así que la fila desaparece igual.
+HTMX extrae el `<span>` OOB y actualiza el número. Lo que queda para el `<li>` es vacío, así que la fila desaparece.
+
+**Importante:** en HTMX 4, si una respuesta trae elementos OOB y el resto queda vacío, por defecto **no** se hace el swap principal (opción `allowEmptySwapAfterOOB: false`). Sin cambiar esa opción, el contador bajaba pero el `<li>` seguía en pantalla hasta recargar. Por eso en `htmx-config` se agregó `"allowEmptySwapAfterOOB": true` (ver sección 5.1).
 
 ---
 
@@ -170,6 +172,7 @@ En **HTMX 4**, a diferencia de HTMX 2, las respuestas de error (4xx y 5xx) **se 
 
 Solución, en los dos layouts:
 
-- `<meta name="htmx-config" content='{"noSwap":[204,304,"4xx","5xx"]}'>`: las respuestas de error **no** se insertan, como en HTMX 2.
+- `<meta name="htmx-config" content='{"noSwap":[204,304,"4xx","5xx"],"allowEmptySwapAfterOOB":true}'>`: las respuestas de error **no** se insertan, como en HTMX 2.
+- `"allowEmptySwapAfterOOB": true`: permite que el swap principal se haga aunque la respuesta quede vacía después de sacar los elementos OOB. Lo necesita el borrado (sección 3.4): la respuesta trae solo el contador OOB, y el `<li>` tiene que reemplazarse por "nada".
 - `hx-on:htmx:response:error="alert(...)"` en el `<body>`: ante cualquier error de una petición HTMX se muestra un aviso al usuario. El evento sube (*bubbling*) desde el formulario o botón hasta el `<body>`.
 

@@ -8,7 +8,7 @@ templ layout_entities(titulo string){
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JamBox </title>
   <link rel="stylesheet" href="/static/styles.css">
-    <meta name="htmx-config" content='{"noSwap":[204,304,"4xx","5xx"]}'>
+    <meta name="htmx-config" content='{"noSwap":[204,304,"4xx","5xx"],"allowEmptySwapAfterOOB":true}'>
   <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0/dist/htmx.min.js"></script>
 </head>
 <body id="body" hx-on:htmx:response:error="alert('No se pudo completar la operación. Revisá los datos ingresados o si el elemento está siendo usado por otro.')">

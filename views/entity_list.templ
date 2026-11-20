@@ -5,6 +5,14 @@ import (
 	db "github.com/arijuarez/Prog-WEB-2026/bd/sqlc"
 )
 
+// duracion convierte segundos a "m:ss" (o "h:mm:ss" si pasa la hora).
+func duracion(seg int32) string {
+	if seg >= 3600 {
+		return fmt.Sprintf("%d:%02d:%02d", seg/3600, seg%3600/60, seg%60)
+	}
+	return fmt.Sprintf("%d:%02d", seg/60, seg%60)
+}
+
 templ UserList(users []db.User){
     <section class="entity-list-panel" id="user-list"> 
 		<div class="entity-list-header">
@@ -15,12 +23,12 @@ templ UserList(users []db.User){
 			for _, user := range users {
 				<li>
 					<span>{ user.UserName }</span>
-					<span>(Amigos: { fmt.Sprintf("%d", user.Amigos) })</span>
-					
+					<span class="chip-id">ID <strong>{ fmt.Sprint(user.IDUser) }</strong></span>
+					<span>Amigos <strong>{ fmt.Sprint(user.Amigos) }</strong></span>
 					if user.Photo != 0 {
-						<span>(Foto ID: { fmt.Sprintf("%d", user.Photo) })</span>
+						<span>Foto <strong>#{ fmt.Sprint(user.Photo) }</strong></span>
 					}
-					
+
 					<button type="button"
 						hx-delete={ fmt.Sprintf("/users/%d", user.IDUser) }
 						hx-target="closest li"
@@ -44,12 +52,15 @@ templ ArtistsList(artists []db.Artist){
         <ul id="lista">
 			for _, artist := range artists {
 				<li>
-					<span>(Artist Name: { fmt.Sprintf("%s", artist.ArtistName)})</span>
-					
+					<span>{ artist.ArtistName }</span>
+					<span class="chip-id">ID <strong>{ fmt.Sprint(artist.IDArtist) }</strong></span>
 					if artist.Photo != 0 {
-						<span>(Foto ID: { fmt.Sprintf("%d", artist.Photo) })</span>
+						<span>Foto <strong>#{ fmt.Sprint(artist.Photo) }</strong></span>
 					}
-					
+					if artist.ArtistBio != "" {
+						<span class="item-desc">{ artist.ArtistBio }</span>
+					}
+
 					<button type="button"
 						hx-delete={ fmt.Sprintf("/artists/%d", artist.IDArtist) }
 						hx-target="closest li"
@@ -73,11 +84,12 @@ templ SongList(songs []db.Song){
         <ul id="lista">
 			for _, song := range songs {
 				<li>
-					<span>(Song Name: { fmt.Sprintf("%s", song.SongName)})</span>
-					<span>(Likes: { fmt.Sprintf("%d", song.Likes) })</span>
-                    <span>(Duration: { fmt.Sprintf("%d", song.SongDur) })</span>
-                    <span>(Id album: { fmt.Sprintf("%d", song.AlbumIDAlbum) })</span>
-					
+					<span>{ song.SongName }</span>
+					<span class="chip-id">ID <strong>{ fmt.Sprint(song.IDSong) }</strong></span>
+					<span>Álbum <strong>#{ fmt.Sprint(song.AlbumIDAlbum) }</strong></span>
+					<span>Duración <strong>{ duracion(song.SongDur) }</strong></span>
+					<span>♥ <strong>{ fmt.Sprint(song.Likes) }</strong></span>
+
 					<button type="button"
 						hx-delete={ fmt.Sprintf("/songs/%d", song.IDSong) }
 						hx-target="closest li"
@@ -101,18 +113,19 @@ templ ReviewList(reviews []db.Review){
         <ul id="lista">
 			for _, review := range reviews {
 				<li>
-					<span>(Review Text: { fmt.Sprintf("%s", review.ReviewText)})</span>
-					<span>(Review Rate: { fmt.Sprintf("%.1f", review.ReviewRate)})</span>
-					<span>(Review Date: { review.ReviewDate.Format("02/01/2006")})</span>
-					<span>(User (ID): { fmt.Sprintf("%d", review.UserIDUser)})</span>
+					<span>{ review.ReviewText }</span>
+					<span class="chip-id">ID <strong>{ fmt.Sprint(review.IDReview) }</strong></span>
+					<span class="chip-rate">★ <strong>{ fmt.Sprintf("%.1f", review.ReviewRate) }</strong></span>
+					<span>Fecha <strong>{ review.ReviewDate.Format("02/01/2006") }</strong></span>
+					<span>Usuario <strong>#{ fmt.Sprint(review.UserIDUser) }</strong></span>
 					if review.SongIDSong.Valid {
-						<span>(Song (ID (optional)): { fmt.Sprintf("%d", review.SongIDSong.Int32)})</span>
+						<span>Canción <strong>#{ fmt.Sprint(review.SongIDSong.Int32) }</strong></span>
 					}
 					if review.AlbumIDAlbum.Valid {
-						<span>(ALbum (ID (optional)): { fmt.Sprintf("%d", review.AlbumIDAlbum.Int32)})</span>
+						<span>Álbum <strong>#{ fmt.Sprint(review.AlbumIDAlbum.Int32) }</strong></span>
 					}
-					<span>(Likes: { fmt.Sprintf("%d", review.Likes)})</span>
-        
+					<span>♥ <strong>{ fmt.Sprint(review.Likes) }</strong></span>
+
 					<button type="button"
 						hx-delete={ fmt.Sprintf("/reviews/%d", review.IDReview) }
 						hx-target="closest li"
@@ -135,16 +148,16 @@ templ AlbumList(albums []db.Album){
         <ul id="lista">
 			for _, album := range albums {
 				<li>
-					<span>(Album name: { fmt.Sprintf("%s", album.AlbumName) })</span>
-					<span>(Duration: { fmt.Sprintf("%d", album.AlbumDur) })</span>
-                    <span>(Release date: { album.ReleaseDate.Format("02/01/2006") })</span>
-					<span>(Likes: { fmt.Sprintf("%d", album.Likes) })</span>
-                    <span>(Id artista: { fmt.Sprintf("%d", album.ArtistIDArtist) })</span>
-                    
+					<span>{ album.AlbumName }</span>
+					<span class="chip-id">ID <strong>{ fmt.Sprint(album.IDAlbum) }</strong></span>
+					<span>Artista <strong>#{ fmt.Sprint(album.ArtistIDArtist) }</strong></span>
+					<span>Lanzamiento <strong>{ album.ReleaseDate.Format("02/01/2006") }</strong></span>
+					<span>Duración <strong>{ duracion(album.AlbumDur) }</strong></span>
+					<span>♥ <strong>{ fmt.Sprint(album.Likes) }</strong></span>
 					if album.AlbumPh != 0 {
-						<span>(Foto ID: { fmt.Sprintf("%d", album.AlbumPh) })</span>
+						<span>Portada <strong>#{ fmt.Sprint(album.AlbumPh) }</strong></span>
 					}
-					
+
 					<button type="button"
 						hx-delete={ fmt.Sprintf("/albums/%d", album.IDAlbum) }
 						hx-target="closest li"
